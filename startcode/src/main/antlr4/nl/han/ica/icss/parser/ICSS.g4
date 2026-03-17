@@ -1,49 +1,47 @@
 grammar ICSS;
 
-//--- LEXER: ---
-
-// IF support:
 IF: 'if';
 ELSE: 'else';
-BOX_BRACKET_OPEN: '[';
-BOX_BRACKET_CLOSE: ']';
+OPENING_BRACKET: '[';
+CLOSING_BRACKET: ']';
 
-
-//Literals
 TRUE: 'TRUE';
 FALSE: 'FALSE';
-PIXELSIZE: [0-9]+ 'px';
-PERCENTAGE: [0-9]+ '%';
+PIXEL_SIZE: SCALAR 'px';
+PERCENTAGE: SCALAR '%';
 SCALAR: [0-9]+;
 
+// color must be six hexadecimal characters long
+COLOR: HASHTAG [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f];
 
-//Color value takes precedence over id idents
-COLOR: '#' [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f];
+// elements, ids, and classes must be snake-case
+SNAKE_CASE_IDENTIFIER: [a-z][a-z0-9\-]*;
+PASCAL_CASE_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 
-//Specific identifiers for id's and css classes
-ID_IDENT: '#' [a-z0-9\-]+;
-CLASS_IDENT: '.' [a-z0-9\-]+;
+WHITESPACE: [ \t\r\n]+ -> skip;
 
-//General identifiers
-LOWER_IDENT: [a-z] [a-z0-9\-]*;
-CAPITAL_IDENT: [A-Z] [A-Za-z0-9_]*;
-
-//All whitespace is skipped
-WS: [ \t\r\n]+ -> skip;
-
-//
-OPEN_BRACE: '{';
-CLOSE_BRACE: '}';
+OPENING_BRACE: '{';
+CLOSING_BRACE: '}';
 SEMICOLON: ';';
 COLON: ':';
 PLUS: '+';
-MIN: '-';
-MUL: '*';
+MINUS: '-';
+ASTERISK: '*';
+HASHTAG: '#';
+PERIOD: '.';
 ASSIGNMENT_OPERATOR: ':=';
 
+// grammar rule names inspired from https://www.w3.org/TR/CSS2/grammar.html#grammar
+stylesheet: ruleset* EOF;
+ruleset: selector OPENING_BRACE declarations CLOSING_BRACE;
 
+selector: element | id | class;
+element: SNAKE_CASE_IDENTIFIER;
+id: PERIOD SNAKE_CASE_IDENTIFIER;
+class: HASHTAG SNAKE_CASE_IDENTIFIER;
 
-
-//--- PARSER: ---
-stylesheet: EOF;
-
+declarations: declaration*;
+declaration: property COLON value SEMICOLON;
+// only these properties are allowed
+property: 'color' | 'background-color' | 'width' | 'height';
+value: MINUS? (SCALAR | PERCENTAGE | PIXEL_SIZE) | COLOR;
