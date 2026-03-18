@@ -5,7 +5,7 @@ import nl.han.ica.icss.ast.AstNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Operation extends Expression {
+public abstract class Operation implements Expression {
 
     public Expression lhs;
     public Expression rhs;

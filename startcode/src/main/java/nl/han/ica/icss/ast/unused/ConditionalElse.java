@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ConditionalElse extends AstNode {
+public class ConditionalElse implements AstNode {
 
     public ArrayList<AstNode> body = new ArrayList<>();
 

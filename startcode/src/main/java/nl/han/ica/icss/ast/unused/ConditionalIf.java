@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ConditionalIf extends AstNode {
+public class ConditionalIf implements AstNode {
 
 
     public Expression conditionalExpression;

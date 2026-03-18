@@ -10,7 +10,7 @@ import java.util.Objects;
  * An assignment binds a expression to an identifier.
  *
  */
-public class VariableAssignment extends AstNode {
+public class VariableAssignment implements AstNode {
 	
 	public VariableReference name;
 	public Expression expression;

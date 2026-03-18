@@ -1,8 +1,11 @@
 package nl.han.ica.icss.ast.unused;
 
+import nl.han.ica.icss.ast.AstNode;
+
+import java.util.List;
 import java.util.Objects;
 
-public class VariableReference extends Expression {
+public class VariableReference implements Expression {
 
 	public String name;
 	
@@ -11,7 +14,17 @@ public class VariableReference extends Expression {
 		this.name = name;
 	}
 
-	@Override
+  @Override
+  public List<AstNode> getChildren() {
+    return List.of();
+  }
+
+  @Override
+  public AstNode addChild(AstNode child) {
+    return this;
+  }
+
+  @Override
 	public String getNodeLabel() {
 		return "VariableReference (" + name + ")";
 	}
