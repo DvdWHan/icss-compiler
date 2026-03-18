@@ -2,7 +2,6 @@ package nl.han.ica.icss.ast;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import nl.han.ica.icss.ast.unused.Expression;
 
 import java.util.List;
 
@@ -11,11 +10,11 @@ import java.util.List;
 @SuppressWarnings("ClassCanBeRecord")
 public class Declaration implements AstNode {
   private final Property property;
-  private final Value value;
+  private final Literal literal;
 
   @Override
   public List<AstNode> getChildren() {
-    return List.of(property, value);
+    return List.of(property, literal);
   }
 
   @Override

@@ -1,6 +1,6 @@
-package nl.han.ica.icss.ast.unused.literals;
+package nl.han.ica.icss.ast.literals;
 
-import nl.han.ica.icss.ast.unused.Literal;
+import nl.han.ica.icss.ast.Literal;
 import java.util.Objects;
 
 public class BooleanLiteral extends Literal {
