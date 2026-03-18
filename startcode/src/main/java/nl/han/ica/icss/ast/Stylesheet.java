@@ -1,54 +1,37 @@
 package nl.han.ica.icss.ast;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
-/**
- * A stylesheet is the root node of the AST, it consists of one or more statements
- *
- */
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Stylesheet extends AstNode {
+  private final List<AstNode> rulesets = new ArrayList<>();
 
+  @Override
+  public String getNodeLabel() {
+    return "Stylesheet";
+  }
 
-	public ArrayList<AstNode> body;
-	
-	public Stylesheet() {
-		this.body = new ArrayList<>();
-	}
-	public Stylesheet(ArrayList<AstNode> body) {
-		this.body = body;
-	}
-	@Override
-	public String getNodeLabel() {
-		return "Stylesheet";
-	}
-	@Override
-	public ArrayList<AstNode> getChildren() {
-		return this.body;
-	}
-	@Override
-	public AstNode addChild(AstNode child) {
-	    	body.add(child);
-	    	return this;
-	}
-	@Override
-	public AstNode removeChild(AstNode child) {
-		body.remove(child);
-		return this;
-	}
+  @Override
+  public List<AstNode> getChildren() {
+    return this.rulesets;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		Stylesheet that = (Stylesheet) o;
-		return Objects.equals(body, that.body);
-	}
+  @Override
+  public AstNode addChild(AstNode child) {
+    rulesets.add(child);
+    return this;
+  }
 
-	@Override
-	public int hashCode() {
-
-		return Objects.hash(body);
-	}
+  @Override
+  public AstNode removeChild(AstNode child) {
+    rulesets.remove(child);
+    return this;
+  }
 }
