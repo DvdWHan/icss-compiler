@@ -3,11 +3,10 @@ package nl.han.ica.icss.parser;
 import lombok.Getter;
 import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.datastructures.IHANStack;
-import nl.han.ica.generated.ICSSParser;
 import nl.han.ica.icss.ast.AST;
 import nl.han.ica.icss.ast.ASTNode;
 
-public class ASTListener extends nl.han.ica.generated.ICSSBaseListener {
+public class ASTListener extends ICSSBaseListener {
   @Getter private final AST ast = new AST();
   private final IHANStack<ASTNode> currentContainer = new HANStack<>();
 

@@ -1,5 +1,5 @@
-set output_directory=src/main/java/nl/han/ica/generated
-set package=nl.han.ica.generated
+set output_directory=src/main/java/nl/han/ica/icss/parser
+set package=nl.han.ica.icss.parser
 set grammar_file=src/main/antlr4/nl/han/ica/icss/parser/ICSS.g4
 
 @REM mvn clean compile
