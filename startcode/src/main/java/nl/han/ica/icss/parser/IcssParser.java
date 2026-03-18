@@ -1,5 +1,5 @@
 // Generated from src/main/antlr4/nl/han/ica/icss/parser/Icss.g4 by ANTLR 4.13.2
-package nl/han/ica/icss/parser;
+package nl.han.ica.icss.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

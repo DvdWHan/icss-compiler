@@ -7,7 +7,7 @@ import nl.han.ica.icss.ast.*;
 /**
  * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
  */
-public class AstListener extends ICSSBaseListener {
+public class AstListener extends IcssBaseListener {
 	
 	//Accumulator attributes:
 	private Ast ast;
@@ -22,5 +22,4 @@ public class AstListener extends ICSSBaseListener {
     public Ast getAst() {
         return ast;
     }
-    
 }

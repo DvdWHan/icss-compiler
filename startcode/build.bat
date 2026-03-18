@@ -1,7 +1,7 @@
 @REM mvn clean compile
 
-set package=nl/han/ica/icss/parser
-set output_directory=src/main/java/%package%
+set package=nl.han.ica.icss.parser
+set output_directory=src/main/java/nl/han/ica/icss/parser
 set grammar_file=src/main/antlr4/nl/han/ica/icss/parser/Icss.g4
 
 antlr4 -o %output_directory% -package %package% %grammar_file%
