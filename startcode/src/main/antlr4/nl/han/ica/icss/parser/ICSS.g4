@@ -35,10 +35,10 @@ ASSIGNMENT_OPERATOR: ':=';
 stylesheet: ruleset* EOF;
 ruleset: selector OPENING_BRACE declarations CLOSING_BRACE;
 
-selector: element | id | class;
-element: SNAKE_CASE_IDENTIFIER;
-id: PERIOD SNAKE_CASE_IDENTIFIER;
-class: HASHTAG SNAKE_CASE_IDENTIFIER;
+selector: elementSelector | idSelector | classSelector;
+elementSelector: SNAKE_CASE_IDENTIFIER;
+idSelector: PERIOD SNAKE_CASE_IDENTIFIER;
+classSelector: HASHTAG SNAKE_CASE_IDENTIFIER;
 
 declarations: declaration*;
 declaration: property COLON value SEMICOLON;
