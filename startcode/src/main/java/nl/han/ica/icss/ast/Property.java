@@ -1,14 +1,14 @@
 package nl.han.ica.icss.ast;
 
-public class PropertyName extends ASTNode {
+public class Property extends ASTNode {
 
     public String name;
 
-    public PropertyName() {
+    public Property() {
         super();
         name = "undefined";
     }
-    public PropertyName(String name) {
+    public Property(String name) {
         super();
         this.name = name;
     }

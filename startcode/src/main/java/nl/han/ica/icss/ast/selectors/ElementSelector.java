@@ -4,10 +4,10 @@ import nl.han.ica.icss.ast.Selector;
 
 import java.util.Objects;
 
-public class TagSelector extends Selector {
+public class ElementSelector extends Selector {
     public String tag;
 
-    public TagSelector(String tag) {
+    public ElementSelector(String tag) {
         this.tag = tag;
     }
 
@@ -23,7 +23,7 @@ public class TagSelector extends Selector {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        TagSelector that = (TagSelector) o;
+        ElementSelector that = (ElementSelector) o;
         return Objects.equals(tag, that.tag);
     }
 

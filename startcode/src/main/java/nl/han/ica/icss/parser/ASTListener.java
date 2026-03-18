@@ -1,35 +1,63 @@
 package nl.han.ica.icss.parser;
 
-import java.util.Stack;
-
-
+import lombok.Getter;
+import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.datastructures.IHANStack;
-import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.*;
-import nl.han.ica.icss.ast.operations.AddOperation;
-import nl.han.ica.icss.ast.operations.MultiplyOperation;
-import nl.han.ica.icss.ast.operations.SubtractOperation;
-import nl.han.ica.icss.ast.selectors.ClassSelector;
-import nl.han.ica.icss.ast.selectors.IdSelector;
-import nl.han.ica.icss.ast.selectors.TagSelector;
+import nl.han.ica.generated.ICSSParser;
+import nl.han.ica.icss.ast.AST;
+import nl.han.ica.icss.ast.ASTNode;
 
-/**
- * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
- */
-public class ASTListener extends ICSSBaseListener {
-	
-	//Accumulator attributes:
-	private AST ast;
+public class ASTListener extends nl.han.ica.generated.ICSSBaseListener {
+  @Getter private final AST ast = new AST();
+  private final IHANStack<ASTNode> currentContainer = new HANStack<>();
 
-	//Use this to keep track of the parent nodes when recursively traversing the ast
-	private IHANStack<ASTNode> currentContainer;
-
-	public ASTListener() {
-		ast = new AST();
-		//currentContainer = new HANStack<>();
-	}
-    public AST getAST() {
-        return ast;
-    }
+  @Override
+  public void exitStylesheet(ICSSParser.StylesheetContext context) {
     
+  }
+
+  @Override
+  public void exitRuleset(ICSSParser.RulesetContext context) {
+    
+  }
+
+  @Override
+  public void exitSelector(ICSSParser.SelectorContext context) {
+    
+  }
+
+  @Override
+  public void exitElementSelector(ICSSParser.ElementSelectorContext context) {
+    
+  }
+
+  @Override
+  public void exitIdSelector(ICSSParser.IdSelectorContext context) {
+    
+  }
+
+  @Override
+  public void exitClassSelector(ICSSParser.ClassSelectorContext context) {
+    
+  }
+
+  @Override
+  public void exitDeclarations(ICSSParser.DeclarationsContext context) {
+    
+  }
+
+  @Override
+  public void exitDeclaration(ICSSParser.DeclarationContext context) {
+    
+  }
+
+  @Override
+  public void exitProperty(ICSSParser.PropertyContext context) {
+    
+  }
+
+  @Override
+  public void exitValue(ICSSParser.ValueContext context) {
+    
+  }
 }
