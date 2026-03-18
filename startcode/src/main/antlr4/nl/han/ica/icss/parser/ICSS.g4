@@ -31,7 +31,7 @@ HASHTAG: '#';
 PERIOD: '.';
 ASSIGNMENT_OPERATOR: ':=';
 
-// grammar rule names inspired from https://www.w3.org/TR/CSS2/grammar.html#grammar
+// grammar rule names inspired by https://www.w3.org/TR/CSS2/grammar.html#grammar
 stylesheet: ruleset* EOF;
 ruleset: selector OPENING_BRACE declarations CLOSING_BRACE;
 
