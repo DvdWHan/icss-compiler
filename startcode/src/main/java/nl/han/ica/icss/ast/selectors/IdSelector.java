@@ -4,17 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import nl.han.ica.icss.ast.Selector;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @AllArgsConstructor
-public class IdSelector extends Selector {
-  private final String id;
-
-  public String getNodeLabel() {
-    return "IdSelector(%s)".formatted(id);
-  }
+@SuppressWarnings("ClassCanBeRecord")
+public class IdSelector implements Selector {
+  private final String identifier;
 
   @Override
-  public String toString() {
-    return this.id;
+  public String getIdentifier() {
+    return this.identifier;
   }
 }
