@@ -5,8 +5,8 @@ import nl.han.ica.icss.checker.Checker;
 import nl.han.ica.icss.checker.SemanticError;
 import nl.han.ica.icss.generator.Generator;
 import nl.han.ica.icss.parser.AstListener;
-import nl.han.ica.icss.parser.ICSSLexer;
-import nl.han.ica.icss.parser.ICSSParser;
+import nl.han.ica.icss.parser.IcssLexer;
+import nl.han.ica.icss.parser.IcssParser;
 import nl.han.ica.icss.transforms.Evaluator;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
@@ -51,7 +51,7 @@ public class Pipeline implements ANTLRErrorListener {
 
         //Lex (with Antlr's generated lexer)
         CharStream inputStream = CharStreams.fromString(input);
-        ICSSLexer lexer = new ICSSLexer(inputStream);
+        IcssLexer lexer = new IcssLexer(inputStream);
         lexer.removeErrorListeners();
         lexer.addErrorListener(this);
         errors.clear();
@@ -59,7 +59,7 @@ public class Pipeline implements ANTLRErrorListener {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
             //Parse (with Antlr's generated parser)
-            ICSSParser parser = new ICSSParser(tokens);
+            IcssParser parser = new IcssParser(tokens);
             parser.removeErrorListeners();
             parser.addErrorListener(this);
 
