@@ -1,4 +1,4 @@
-package nl.han.ica.icss.ast.types;
+package nl.han.ica.icss.ast.unused.types;
 
 public enum ExpressionType {
   BOOLEAN,

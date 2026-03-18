@@ -1,4 +1,4 @@
-package nl.han.ica.icss.ast;
+package nl.han.ica.icss.ast.unused;
 
 import java.util.Objects;
 

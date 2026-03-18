@@ -1,6 +1,9 @@
-package nl.han.ica.icss.ast;
+package nl.han.ica.icss.ast.unused;
+
+import nl.han.ica.icss.ast.AstNode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Operation extends Expression {
 
@@ -8,7 +11,7 @@ public abstract class Operation extends Expression {
     public Expression rhs;
 
     @Override
-    public ArrayList<AstNode> getChildren() {
+    public List<AstNode> getChildren() {
         ArrayList<AstNode> children = new ArrayList<>();
         if(lhs != null)
             children.add(lhs);

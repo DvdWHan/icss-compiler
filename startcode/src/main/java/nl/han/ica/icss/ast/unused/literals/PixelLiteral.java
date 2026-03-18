@@ -1,21 +1,21 @@
-package nl.han.ica.icss.ast.literals;
+package nl.han.ica.icss.ast.unused.literals;
 
-import nl.han.ica.icss.ast.Literal;
+import nl.han.ica.icss.ast.unused.Literal;
 
 import java.util.Objects;
 
-public class ScalarLiteral extends Literal {
+public class PixelLiteral extends Literal {
     public int value;
 
-    public ScalarLiteral(int value) {
+    public PixelLiteral(int value) {
         this.value = value;
     }
-    public ScalarLiteral(String text) {
-        this.value = Integer.parseInt(text);
+    public PixelLiteral(String text) {
+        this.value = Integer.parseInt(text.substring(0, text.length() - 2));
     }
     @Override
     public String getNodeLabel() {
-        return "Scalar literal (" + value + ")";
+        return "Pixel literal (" + value + ")";
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ScalarLiteral extends Literal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        ScalarLiteral that = (ScalarLiteral) o;
+        PixelLiteral that = (PixelLiteral) o;
         return value == that.value;
     }
 

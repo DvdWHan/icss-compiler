@@ -1,21 +1,21 @@
-package nl.han.ica.icss.ast.literals;
+package nl.han.ica.icss.ast.unused.literals;
 
-import nl.han.ica.icss.ast.Literal;
+import nl.han.ica.icss.ast.unused.Literal;
 
 import java.util.Objects;
 
-public class PercentageLiteral extends Literal {
+public class ScalarLiteral extends Literal {
     public int value;
 
-    public PercentageLiteral(int value) {
+    public ScalarLiteral(int value) {
         this.value = value;
     }
-    public PercentageLiteral(String text) {
-        this.value = Integer.parseInt(text.substring(0, text.length() - 1));
+    public ScalarLiteral(String text) {
+        this.value = Integer.parseInt(text);
     }
     @Override
     public String getNodeLabel() {
-        return "Percentage literal (" + value + ")";
+        return "Scalar literal (" + value + ")";
     }
 
     @Override
@@ -23,7 +23,7 @@ public class PercentageLiteral extends Literal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        PercentageLiteral that = (PercentageLiteral) o;
+        ScalarLiteral that = (ScalarLiteral) o;
         return value == that.value;
     }
 

@@ -2,6 +2,7 @@ package nl.han.ica.icss.transforms;
 
 import nl.han.ica.datastructures.IHanLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.unused.Literal;
 
 import java.util.HashMap;
 

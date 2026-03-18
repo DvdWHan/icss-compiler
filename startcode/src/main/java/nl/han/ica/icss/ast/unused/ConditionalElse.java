@@ -1,6 +1,9 @@
-package nl.han.ica.icss.ast;
+package nl.han.ica.icss.ast.unused;
+
+import nl.han.ica.icss.ast.AstNode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ConditionalElse extends AstNode {
@@ -19,7 +22,7 @@ public class ConditionalElse extends AstNode {
         return "Else_Clause";
     }
     @Override
-    public ArrayList<AstNode> getChildren() {
+    public List<AstNode> getChildren() {
         ArrayList<AstNode> children = new ArrayList<>();
         children.addAll(body);
 

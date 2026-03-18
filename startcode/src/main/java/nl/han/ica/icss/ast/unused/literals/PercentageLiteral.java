@@ -1,21 +1,21 @@
-package nl.han.ica.icss.ast.literals;
+package nl.han.ica.icss.ast.unused.literals;
 
-import nl.han.ica.icss.ast.Literal;
+import nl.han.ica.icss.ast.unused.Literal;
 
 import java.util.Objects;
 
-public class PixelLiteral extends Literal {
+public class PercentageLiteral extends Literal {
     public int value;
 
-    public PixelLiteral(int value) {
+    public PercentageLiteral(int value) {
         this.value = value;
     }
-    public PixelLiteral(String text) {
-        this.value = Integer.parseInt(text.substring(0, text.length() - 2));
+    public PercentageLiteral(String text) {
+        this.value = Integer.parseInt(text.substring(0, text.length() - 1));
     }
     @Override
     public String getNodeLabel() {
-        return "Pixel literal (" + value + ")";
+        return "Percentage literal (" + value + ")";
     }
 
     @Override
@@ -23,7 +23,7 @@ public class PixelLiteral extends Literal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        PixelLiteral that = (PixelLiteral) o;
+        PercentageLiteral that = (PercentageLiteral) o;
         return value == that.value;
     }
 
