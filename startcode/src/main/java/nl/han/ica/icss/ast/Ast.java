@@ -4,6 +4,7 @@ import lombok.*;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,13 +14,13 @@ import java.util.ArrayList;
 public class Ast {
   private Stylesheet root = new Stylesheet();
 
-  public ArrayList<SemanticError> getErrors() {
-    ArrayList<SemanticError> errors = new ArrayList<>();
+  public List<SemanticError> getErrors() {
+    List<SemanticError> errors = new ArrayList<>();
     collectErrors(errors, root);
     return errors;
   }
 
-  private void collectErrors(ArrayList<SemanticError> errors, AstNode node) {
+  private void collectErrors(List<SemanticError> errors, AstNode node) {
     if (node.hasError()) {
       errors.add(node.getError());
     }
