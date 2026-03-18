@@ -1,20 +1,10 @@
 package nl.han.ica.icss.ast;
 
 public class Property extends AstNode {
+  private String name = "undefined";
 
-    public String name;
-
-    public Property() {
-        super();
-        name = "undefined";
-    }
-    public Property(String name) {
-        super();
-        this.name = name;
-    }
-
-    @Override
-    public String getNodeLabel() {
-        return "Property: (" + name + ")";
-    }
+  @Override
+  public String getNodeLabel() {
+    return "Property(%s)".formatted(name);
+  }
 }
