@@ -4,6 +4,7 @@ import lombok.Getter;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -14,7 +15,7 @@ public class AstNode {
     return "AstNode";
   }
 
-  public ArrayList<AstNode> getChildren() {
+  public List<AstNode> getChildren() {
     return new ArrayList<>();
   }
 
