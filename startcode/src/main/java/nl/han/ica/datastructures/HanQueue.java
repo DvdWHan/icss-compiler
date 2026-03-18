@@ -3,9 +3,8 @@ package nl.han.ica.datastructures;
 import lombok.AllArgsConstructor;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
-public class HANQueue<T> implements IHANQueue<T> {
+public class HanQueue<T> implements IHanQueue<T> {
   private Node<T> head;
   private Node<T> tail;
   private int size;
@@ -65,7 +64,7 @@ public class HANQueue<T> implements IHANQueue<T> {
   }
 
   public static void main(String[] args) {
-    var q =  new HANQueue<String>();
+    var q =  new HanQueue<String>();
     System.out.println(q.peek());
   }
 }

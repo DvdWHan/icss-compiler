@@ -1,7 +1,5 @@
 package nl.han.ica.icss.ast;
 
-import nl.han.ica.icss.checker.SemanticError;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -9,15 +7,15 @@ import java.util.Objects;
  * A stylesheet is the root node of the AST, it consists of one or more statements
  *
  */
-public class Stylesheet extends ASTNode {
+public class Stylesheet extends AstNode {
 
 
-	public ArrayList<ASTNode> body;
+	public ArrayList<AstNode> body;
 	
 	public Stylesheet() {
 		this.body = new ArrayList<>();
 	}
-	public Stylesheet(ArrayList<ASTNode> body) {
+	public Stylesheet(ArrayList<AstNode> body) {
 		this.body = body;
 	}
 	@Override
@@ -25,16 +23,16 @@ public class Stylesheet extends ASTNode {
 		return "Stylesheet";
 	}
 	@Override
-	public ArrayList<ASTNode> getChildren() {
+	public ArrayList<AstNode> getChildren() {
 		return this.body;
 	}
 	@Override
-	public ASTNode addChild(ASTNode child) {
+	public AstNode addChild(AstNode child) {
 	    	body.add(child);
 	    	return this;
 	}
 	@Override
-	public ASTNode removeChild(ASTNode child) {
+	public AstNode removeChild(AstNode child) {
 		body.remove(child);
 		return this;
 	}

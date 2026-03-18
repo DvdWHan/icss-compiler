@@ -3,17 +3,16 @@ package nl.han.ica.icss.ast;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
-public class AST {
+public class Ast {
 	//The root of the tree
 	public Stylesheet root;
 
-	public AST() {
+	public Ast() {
 		root = new Stylesheet();
 	}
-	public AST(Stylesheet stylesheet) {
+	public Ast(Stylesheet stylesheet) {
 		root = stylesheet;
 	}
 	public void setRoot(Stylesheet stylesheet) {
@@ -24,11 +23,11 @@ public class AST {
         collectErrors(errors,root);
         return errors;
     }
-    private void collectErrors(ArrayList<SemanticError> errors, ASTNode node) {
+    private void collectErrors(ArrayList<SemanticError> errors, AstNode node) {
 	    if(node.hasError()) {
 	        errors.add(node.getError());
         }
-        for(ASTNode child: node.getChildren()) {
+        for(AstNode child: node.getChildren()) {
 	        collectErrors(errors,child);
         }
     }
@@ -41,7 +40,7 @@ public class AST {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		AST ast = (AST) o;
+		Ast ast = (Ast) o;
 		return Objects.equals(root, ast.root);
 	}
 

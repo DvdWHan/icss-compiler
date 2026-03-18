@@ -13,7 +13,7 @@ import java.io.*;
 
 class ParserTest {
 
-	AST parseTestFile(String resource) throws IOException {
+	Ast parseTestFile(String resource) throws IOException {
 
 		//Open test file to parse
 		ClassLoader classLoader = this.getClass().getClassLoader();
@@ -41,7 +41,7 @@ class ParserTest {
 		parser.addErrorListener(errorListener);
 
 		//Parse & extract AST
- 		ASTListener listener = new ASTListener();
+ 		AstListener listener = new AstListener();
 		try {
 			ParseTree parseTree = parser.stylesheet();
             ParseTreeWalker walker = new ParseTreeWalker();
@@ -56,29 +56,29 @@ class ParserTest {
 	@Test
 	void testParseLevel0() throws IOException {
 
-		AST sut = parseTestFile("level0.icss");
-		AST exp = Fixtures.uncheckedLevel0();
+		Ast sut = parseTestFile("level0.icss");
+		Ast exp = Fixtures.uncheckedLevel0();
 		assertEquals(exp,sut);
 	}
 	@Test
 	void testParseLevel1() throws IOException {
 
-		AST sut = parseTestFile("level1.icss");
-		AST exp = Fixtures.uncheckedLevel1();
+		Ast sut = parseTestFile("level1.icss");
+		Ast exp = Fixtures.uncheckedLevel1();
 		assertEquals(exp,sut);
 	}
 	@Test
 	void testParseLevel2() throws IOException {
 
-		AST sut = parseTestFile("level2.icss");
-		AST exp = Fixtures.uncheckedLevel2();
+		Ast sut = parseTestFile("level2.icss");
+		Ast exp = Fixtures.uncheckedLevel2();
 		assertEquals(exp,sut);
 	}
 	@Test
 	void testParseLevel3() throws IOException {
 
-		AST sut = parseTestFile("level3.icss");
-		AST exp = Fixtures.uncheckedLevel3();
+		Ast sut = parseTestFile("level3.icss");
+		Ast exp = Fixtures.uncheckedLevel3();
 		assertEquals(exp,sut);
 	}
 }

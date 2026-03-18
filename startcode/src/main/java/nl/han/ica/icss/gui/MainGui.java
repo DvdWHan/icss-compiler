@@ -34,7 +34,7 @@ public class MainGui extends Application {
 
     //UI Components
     private InputPane inputPane;
-    private ASTPane astPane;
+    private AstPane astPane;
     private OutputPane outputPane;
     private FeedbackPane feedbackPane;
 
@@ -57,7 +57,7 @@ public class MainGui extends Application {
         stage.setTitle(title);
 
         inputPane = new InputPane();
-        astPane = new ASTPane();
+        astPane = new AstPane();
         outputPane = new OutputPane();
         feedbackPane = new FeedbackPane();
 

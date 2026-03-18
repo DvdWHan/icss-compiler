@@ -7,7 +7,7 @@ import java.util.Objects;
  * An assignment binds a expression to an identifier.
  *
  */
-public class VariableAssignment extends ASTNode {
+public class VariableAssignment extends AstNode {
 	
 	public VariableReference name;
 	public Expression expression;
@@ -18,7 +18,7 @@ public class VariableAssignment extends ASTNode {
 	}
 
 	@Override
-	public ASTNode addChild(ASTNode child) {
+	public AstNode addChild(AstNode child) {
 		if(name == null) {
 			name = (VariableReference) child;
 		} else if(expression == null) {
@@ -29,9 +29,9 @@ public class VariableAssignment extends ASTNode {
 	}
 
 	@Override
-	public ArrayList<ASTNode> getChildren() {
+	public ArrayList<AstNode> getChildren() {
 
-		ArrayList<ASTNode> children = new ArrayList<>();
+		ArrayList<AstNode> children = new ArrayList<>();
 		if(name != null)
 			children.add(name);
 		if(expression != null)

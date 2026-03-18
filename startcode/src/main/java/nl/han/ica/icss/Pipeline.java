@@ -1,10 +1,10 @@
 package nl.han.ica.icss;
 
-import nl.han.ica.icss.ast.AST;
+import nl.han.ica.icss.ast.Ast;
 import nl.han.ica.icss.checker.Checker;
 import nl.han.ica.icss.checker.SemanticError;
 import nl.han.ica.icss.generator.Generator;
-import nl.han.ica.icss.parser.ASTListener;
+import nl.han.ica.icss.parser.AstListener;
 import nl.han.ica.icss.parser.ICSSLexer;
 import nl.han.ica.icss.parser.ICSSParser;
 import nl.han.ica.icss.transforms.Evaluator;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Pipeline implements ANTLRErrorListener {
 
-    private AST ast;
+    private Ast ast;
     private boolean parsed = false;
     private boolean checked = false;
     private boolean transformed = false;
@@ -31,7 +31,7 @@ public class Pipeline implements ANTLRErrorListener {
         errors = new ArrayList<>();
     }
 
-    public AST getAST() {
+    public Ast getAST() {
         return ast;
     }
     public List<String> getErrors() {
@@ -66,18 +66,18 @@ public class Pipeline implements ANTLRErrorListener {
             ParseTree parseTree = parser.stylesheet();
 
             //Extract AST from the Antlr parse tree
-            ASTListener listener = new ASTListener();
+            AstListener listener = new AstListener();
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(listener, parseTree);
 
             this.ast = listener.getAST();
 
         } catch (RecognitionException e) {
-            this.ast = new AST();
+            this.ast = new Ast();
             errors.add(e.getMessage());
 
         } catch (ParseCancellationException e) {
-            this.ast = new AST();
+            this.ast = new Ast();
             errors.add("Syntax error");
         }
         parsed = errors.isEmpty();

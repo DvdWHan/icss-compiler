@@ -1,4 +1,4 @@
-grammar ICSS;
+grammar Icss;
 
 IF: 'if';
 ELSE: 'else';

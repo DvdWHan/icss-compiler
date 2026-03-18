@@ -1,6 +1,6 @@
 package nl.han.ica.datastructures;
 
-public interface IHANStack<T> {
+public interface IHanStack<T> {
     /**
      * pushes value T to the top of the stack
      * @param value value to push

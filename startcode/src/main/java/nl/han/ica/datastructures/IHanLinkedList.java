@@ -1,6 +1,6 @@
 package nl.han.ica.datastructures;
 
-public interface IHANLinkedList<T> {
+public interface IHanLinkedList<T> {
     /**
      * Adds value to the front of the list
      * @param value generic value to be added

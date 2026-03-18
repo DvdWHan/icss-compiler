@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.EmptyStackException;
 
 @NoArgsConstructor
-public class HANStack<T> implements IHANStack<T> {
+public class HanStack<T> implements IHanStack<T> {
   private Node<T> top = null;
   private int size = 0;
 

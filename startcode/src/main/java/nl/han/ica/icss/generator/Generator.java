@@ -1,11 +1,11 @@
 package nl.han.ica.icss.generator;
 
 
-import nl.han.ica.icss.ast.AST;
+import nl.han.ica.icss.ast.Ast;
 
 public class Generator {
 
-	public String generate(AST ast) {
+	public String generate(Ast ast) {
         return "";
 
 

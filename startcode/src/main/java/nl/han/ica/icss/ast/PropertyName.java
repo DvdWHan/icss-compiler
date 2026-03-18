@@ -1,6 +1,6 @@
 package nl.han.ica.icss.ast;
 
-public class PropertyName extends ASTNode {
+public class PropertyName extends AstNode {
 
     public String name;
 

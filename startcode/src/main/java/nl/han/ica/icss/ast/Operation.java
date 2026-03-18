@@ -8,8 +8,8 @@ public abstract class Operation extends Expression {
     public Expression rhs;
 
     @Override
-    public ArrayList<ASTNode> getChildren() {
-        ArrayList<ASTNode> children = new ArrayList<>();
+    public ArrayList<AstNode> getChildren() {
+        ArrayList<AstNode> children = new ArrayList<>();
         if(lhs != null)
             children.add(lhs);
         if(rhs != null)
@@ -18,7 +18,7 @@ public abstract class Operation extends Expression {
     }
 
     @Override
-    public ASTNode addChild(ASTNode child) {
+    public AstNode addChild(AstNode child) {
         if(lhs == null) {
             lhs = (Expression) child;
         } else if(rhs == null) {

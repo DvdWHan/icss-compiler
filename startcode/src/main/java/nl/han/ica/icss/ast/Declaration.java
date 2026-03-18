@@ -6,7 +6,7 @@ import java.util.Objects;
 /*
  * A Declaration defines a style property. Declarations are things like "width: 100px"
  */
-public class Declaration extends ASTNode {
+public class Declaration extends AstNode {
 	public PropertyName property;
 	public Expression expression;
 
@@ -23,9 +23,9 @@ public class Declaration extends ASTNode {
 	}
 
 	@Override
-	public ArrayList<ASTNode> getChildren() {
+	public ArrayList<AstNode> getChildren() {
 
-		ArrayList<ASTNode> children = new ArrayList<>();
+		ArrayList<AstNode> children = new ArrayList<>();
 		if(property != null)
 		    children.add(property);
 		if(expression != null)
@@ -33,7 +33,7 @@ public class Declaration extends ASTNode {
 		return children;
 	}
 	@Override
-	public ASTNode addChild(ASTNode child) {
+	public AstNode addChild(AstNode child) {
 		if(child instanceof PropertyName) {
 			property = (PropertyName) child;
 		} else if(child instanceof Expression) {

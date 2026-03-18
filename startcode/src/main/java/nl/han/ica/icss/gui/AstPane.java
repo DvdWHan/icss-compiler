@@ -6,22 +6,22 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import nl.han.ica.icss.ast.AST;
-import nl.han.ica.icss.ast.ASTNode;
+import nl.han.ica.icss.ast.Ast;
+import nl.han.ica.icss.ast.AstNode;
 
-public class ASTPane extends BorderPane {
+public class AstPane extends BorderPane {
 
-    private TreeView<ASTNode> content;
+    private TreeView<AstNode> content;
     private Label title;
 
-    public ASTPane () {
+    public AstPane() {
 		super();
 
 		title = new Label("Internal (AST):");
-		content = new TreeView<ASTNode>();
-        content.setCellFactory(treeview ->  new TreeCell<ASTNode>() {
+		content = new TreeView<AstNode>();
+        content.setCellFactory(treeview ->  new TreeCell<AstNode>() {
             @Override
-            public void updateItem(ASTNode item, boolean empty) {
+            public void updateItem(AstNode item, boolean empty) {
                 super.updateItem(item, empty);
 
                 getStyleClass().removeAll("error");
@@ -47,15 +47,15 @@ public class ASTPane extends BorderPane {
      * Updates the panes based on the current content of the AST
      * @param ast
      */
-    public void update(AST ast) {
+    public void update(Ast ast) {
         content.setRoot(astNodeToTreeItem(ast.root));
     }
-    private TreeItem<ASTNode> astNodeToTreeItem(ASTNode astNode) {
+    private TreeItem<AstNode> astNodeToTreeItem(AstNode astNode) {
 
-        TreeItem<ASTNode> tvNode = new TreeItem<ASTNode>(astNode);
+        TreeItem<AstNode> tvNode = new TreeItem<AstNode>(astNode);
         tvNode.setExpanded(true);
 
-        for(ASTNode child : astNode.getChildren()) {
+        for(AstNode child : astNode.getChildren()) {
             tvNode.getChildren().add(astNodeToTreeItem(child));
         }
         return tvNode;

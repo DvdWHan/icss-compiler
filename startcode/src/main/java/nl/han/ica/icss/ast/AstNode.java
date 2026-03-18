@@ -5,7 +5,7 @@ import nl.han.ica.icss.checker.SemanticError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ASTNode {
+public class AstNode {
 
     private SemanticError error = null;
 
@@ -21,20 +21,20 @@ public class ASTNode {
      Different AST nodes use different attributes to store their children.
      This method provides a unified interface.
      */
-    public ArrayList<ASTNode> getChildren() {
+    public ArrayList<AstNode> getChildren() {
         return new ArrayList<>();
     }
     /*
     By implementing this method in a subclass you can easily create AST nodes
       incrementally.
     */
-    public ASTNode addChild(ASTNode child) {
+    public AstNode addChild(AstNode child) {
             return this;
     }
     /*
     * By implementing this method you can easily make transformations that prune the AST.
     */
-    public ASTNode removeChild(ASTNode child) {
+    public AstNode removeChild(AstNode child) {
         return this;
     }
 
@@ -60,7 +60,7 @@ public class ASTNode {
 		builder.append("[");
 		builder.append(getNodeLabel());	
 		builder.append("|");
-		for(ASTNode child : getChildren()) {
+		for(AstNode child : getChildren()) {
 			child.toString(builder);
 		}	
 		builder.append("]");
@@ -68,11 +68,11 @@ public class ASTNode {
 
 	@Override
     public boolean equals(Object o) {
-        if(! (o instanceof ASTNode))
+        if(! (o instanceof AstNode))
             return false;
         //Compare all children
-        List<ASTNode> thisChildren = this.getChildren();
-        List<ASTNode> otherChildren = ((ASTNode) o).getChildren();
+        List<AstNode> thisChildren = this.getChildren();
+        List<AstNode> otherChildren = ((AstNode) o).getChildren();
         if(otherChildren.size() != thisChildren.size())
             return false;
         for(int i = 0; i < thisChildren.size(); i++ ) {

@@ -13,7 +13,7 @@ import nl.han.ica.icss.ast.selectors.TagSelector;
 
 public class Fixtures {
 
-    public static AST uncheckedLevel0() {
+    public static Ast uncheckedLevel0() {
 		Stylesheet stylesheet = new Stylesheet();
 		/*
 		p {
@@ -59,10 +59,10 @@ public class Fixtures {
 						.addChild(new ColorLiteral("#000000")))
 		);
 
-        return new AST(stylesheet);
+        return new Ast(stylesheet);
     }
 
-	public static AST uncheckedLevel1() {
+	public static Ast uncheckedLevel1() {
 		Stylesheet stylesheet = new Stylesheet();
 		/*
 			LinkColor := #ff0000;
@@ -129,10 +129,10 @@ public class Fixtures {
 			.addChild((new Declaration("color"))
 				.addChild(new ColorLiteral("#000000")))
 		);
-		return new AST(stylesheet);
+		return new Ast(stylesheet);
 	}
 
-	public static AST uncheckedLevel2() {
+	public static Ast uncheckedLevel2() {
 		Stylesheet stylesheet = new Stylesheet();
 		/*
 			LinkColor := #ff0000;
@@ -204,10 +204,10 @@ public class Fixtures {
 			.addChild((new Declaration("color"))
 				.addChild(new ColorLiteral("#000000")))
 		);
-		return new AST(stylesheet);
+		return new Ast(stylesheet);
 	}
 
-	public static AST uncheckedLevel3() {
+	public static Ast uncheckedLevel3() {
 		Stylesheet stylesheet = new Stylesheet();
 		/*
 			LinkColor := #ff0000;
@@ -324,6 +324,6 @@ public class Fixtures {
 
 		);
 
-		return new AST(stylesheet);
+		return new Ast(stylesheet);
 	}
 }

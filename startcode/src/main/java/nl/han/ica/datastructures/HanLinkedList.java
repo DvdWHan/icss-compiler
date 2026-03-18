@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 
 @NoArgsConstructor
-public class HANLinkedList<T> implements IHANLinkedList<T> {
+public class HanLinkedList<T> implements IHanLinkedList<T> {
   private Node<T> first = null;
   private Node<T> last = null;
   private int size = 0;

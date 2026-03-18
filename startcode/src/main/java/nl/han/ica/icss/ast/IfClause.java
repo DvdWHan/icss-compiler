@@ -3,21 +3,21 @@ package nl.han.ica.icss.ast;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class IfClause extends ASTNode {
+public class IfClause extends AstNode {
 
 
     public Expression conditionalExpression;
-    public ArrayList<ASTNode> body = new ArrayList<>();
+    public ArrayList<AstNode> body = new ArrayList<>();
     public ElseClause elseClause;
 
     public IfClause() { }
 
-    public IfClause(Expression conditionalExpression, ArrayList<ASTNode> body) {
+    public IfClause(Expression conditionalExpression, ArrayList<AstNode> body) {
 
         this.conditionalExpression = conditionalExpression;
         this.body = body;
     }
-    public IfClause(Expression conditionalExpression, ArrayList<ASTNode> body, ElseClause elseClause) {
+    public IfClause(Expression conditionalExpression, ArrayList<AstNode> body, ElseClause elseClause) {
 
         this.conditionalExpression = conditionalExpression;
         this.body = body;
@@ -29,8 +29,8 @@ public class IfClause extends ASTNode {
         return "If_Clause";
     }
     @Override
-    public ArrayList<ASTNode> getChildren() {
-        ArrayList<ASTNode> children = new ArrayList<>();
+    public ArrayList<AstNode> getChildren() {
+        ArrayList<AstNode> children = new ArrayList<>();
         children.add(conditionalExpression);
         children.addAll(body);
         if (elseClause!=null)
@@ -40,7 +40,7 @@ public class IfClause extends ASTNode {
     }
 
     @Override
-    public ASTNode addChild(ASTNode child) {
+    public AstNode addChild(AstNode child) {
         if(child instanceof Expression)
             conditionalExpression  = (Expression) child;
         else if (child instanceof ElseClause)
