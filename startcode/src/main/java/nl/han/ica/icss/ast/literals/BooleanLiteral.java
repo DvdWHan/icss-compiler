@@ -1,34 +1,14 @@
 package nl.han.ica.icss.ast.literals;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import nl.han.ica.icss.ast.Literal;
-import java.util.Objects;
 
-public class BooleanLiteral extends Literal {
-    public boolean value;
-
-    public BooleanLiteral(boolean value) {
-        this.value = value;
-    }
-    public BooleanLiteral(String text) {
-        this.value = text.equals("TRUE");
-    }
-    @Override
-    public String getNodeLabel() {
-        String textValue = value ? "TRUE" : "FALSE";
-        return "Boolean Literal (" + textValue + ")";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        BooleanLiteral that = (BooleanLiteral) o;
-        return value == that.value;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
+@Getter
+@EqualsAndHashCode
+@AllArgsConstructor
+@SuppressWarnings("ClassCanBeRecord")
+public class BooleanLiteral implements Literal<Boolean> {
+  private final Boolean value;
 }
