@@ -3,19 +3,19 @@ package nl.han.ica.icss.ast.literals;
 import nl.han.ica.icss.ast.Literal;
 import java.util.Objects;
 
-public class BoolLiteral extends Literal {
+public class BooleanLiteral extends Literal {
     public boolean value;
 
-    public BoolLiteral(boolean value) {
+    public BooleanLiteral(boolean value) {
         this.value = value;
     }
-    public BoolLiteral(String text) {
+    public BooleanLiteral(String text) {
         this.value = text.equals("TRUE");
     }
     @Override
     public String getNodeLabel() {
         String textValue = value ? "TRUE" : "FALSE";
-        return "Bool Literal (" + textValue + ")";
+        return "Boolean Literal (" + textValue + ")";
     }
 
     @Override
@@ -23,7 +23,7 @@ public class BoolLiteral extends Literal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        BoolLiteral that = (BoolLiteral) o;
+        BooleanLiteral that = (BooleanLiteral) o;
         return value == that.value;
     }
 

@@ -3,14 +3,14 @@ package nl.han.ica.icss.ast;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Stylerule extends AstNode {
+public class Ruleset extends AstNode {
 	
 	public ArrayList<Selector> selectors = new ArrayList<>();
 	public ArrayList<AstNode> body = new ArrayList<>();
 
-    public Stylerule() { }
+    public Ruleset() { }
 
-    public Stylerule(Selector selector, ArrayList<AstNode> body) {
+    public Ruleset(Selector selector, ArrayList<AstNode> body) {
 
     	this.selectors = new ArrayList<>();
     	this.selectors.add(selector);
@@ -44,9 +44,9 @@ public class Stylerule extends AstNode {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
-		Stylerule stylerule = (Stylerule) o;
-		return Objects.equals(selectors, stylerule.selectors) &&
-				Objects.equals(body, stylerule.body);
+		Ruleset ruleset = (Ruleset) o;
+		return Objects.equals(selectors, ruleset.selectors) &&
+           Objects.equals(body, ruleset.body);
 	}
 
 	@Override

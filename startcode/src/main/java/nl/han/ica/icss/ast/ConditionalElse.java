@@ -3,13 +3,13 @@ package nl.han.ica.icss.ast;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ElseClause extends AstNode {
+public class ConditionalElse extends AstNode {
 
     public ArrayList<AstNode> body = new ArrayList<>();
 
-    public ElseClause() { }
+    public ConditionalElse() { }
 
-    public ElseClause(ArrayList<AstNode> body) {
+    public ConditionalElse(ArrayList<AstNode> body) {
 
         this.body = body;
     }
@@ -38,8 +38,8 @@ public class ElseClause extends AstNode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        ElseClause ElseClause = (ElseClause) o;
-        return Objects.equals(body, ElseClause.body);
+        ConditionalElse ConditionalElse = (ConditionalElse) o;
+        return Objects.equals(body, ConditionalElse.body);
     }
 
     @Override

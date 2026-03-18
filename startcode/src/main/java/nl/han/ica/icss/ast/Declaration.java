@@ -7,7 +7,7 @@ import java.util.Objects;
  * A Declaration defines a style property. Declarations are things like "width: 100px"
  */
 public class Declaration extends AstNode {
-	public PropertyName property;
+	public Property property;
 	public Expression expression;
 
 	public Declaration() {
@@ -15,7 +15,7 @@ public class Declaration extends AstNode {
 	}
 	public Declaration(String property) {
 		super();
-		this.property = new PropertyName(property);
+		this.property = new Property(property);
 	}
 	@Override
 	public String getNodeLabel() {
@@ -34,8 +34,8 @@ public class Declaration extends AstNode {
 	}
 	@Override
 	public AstNode addChild(AstNode child) {
-		if(child instanceof PropertyName) {
-			property = (PropertyName) child;
+		if(child instanceof Property) {
+			property = (Property) child;
 		} else if(child instanceof Expression) {
 			expression = (Expression) child;
 		}

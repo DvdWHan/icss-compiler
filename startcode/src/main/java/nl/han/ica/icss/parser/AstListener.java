@@ -19,7 +19,7 @@ public class AstListener extends ICSSBaseListener {
 		ast = new Ast();
 		//currentContainer = new HANStack<>();
 	}
-    public Ast getAST() {
+    public Ast getAst() {
         return ast;
     }
     

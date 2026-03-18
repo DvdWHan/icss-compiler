@@ -1,15 +1,15 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.BoolLiteral;
+import nl.han.ica.icss.ast.literals.BooleanLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
-import nl.han.ica.icss.ast.operations.AddOperation;
-import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.Addition;
+import nl.han.ica.icss.ast.operations.Multiplication;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
-import nl.han.ica.icss.ast.selectors.TagSelector;
+import nl.han.ica.icss.ast.selectors.ElementSelector;
 
 public class Fixtures {
 
@@ -21,8 +21,8 @@ public class Fixtures {
 			width: 500px;
 		}
 		*/
-		stylesheet.addChild((new Stylerule())
-				.addChild(new TagSelector("p"))
+		stylesheet.addChild((new Ruleset())
+				.addChild(new ElementSelector("p"))
 				.addChild((new Declaration("background-color"))
                         .addChild(new ColorLiteral("#ffffff")))
 				.addChild((new Declaration("width"))
@@ -33,8 +33,8 @@ public class Fixtures {
 			color: #ff0000;
 		}
 		*/
-		stylesheet.addChild((new Stylerule())
-				.addChild(new TagSelector("a"))
+		stylesheet.addChild((new Ruleset())
+				.addChild(new ElementSelector("a"))
 				.addChild((new Declaration("color"))
 						.addChild(new ColorLiteral("#ff0000")))
 		);
@@ -43,7 +43,7 @@ public class Fixtures {
 			width: 520px;
 		}
 		*/
-		stylesheet.addChild((new Stylerule())
+		stylesheet.addChild((new Ruleset())
 				.addChild(new IdSelector("#menu"))
 				.addChild((new Declaration("width"))
 						.addChild(new PixelLiteral("520px")))
@@ -53,7 +53,7 @@ public class Fixtures {
 			color: #000000;
 		}
 		*/
-		stylesheet.addChild((new Stylerule())
+		stylesheet.addChild((new Ruleset())
 				.addChild(new ClassSelector(".menu"))
 				.addChild((new Declaration("color"))
 						.addChild(new ColorLiteral("#000000")))
@@ -80,11 +80,11 @@ public class Fixtures {
         );
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("AdjustColor"))
-				.addChild(new BoolLiteral(true))
+				.addChild(new BooleanLiteral(true))
 		);
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("UseLinkColor"))
-				.addChild(new BoolLiteral(false))
+				.addChild(new BooleanLiteral(false))
 		);
    	    /*
 	        p {
@@ -92,8 +92,8 @@ public class Fixtures {
 	        width: ParWidth;
             }
 	    */
-        stylesheet.addChild((new Stylerule())
-            .addChild(new TagSelector("p"))
+        stylesheet.addChild((new Ruleset())
+            .addChild(new ElementSelector("p"))
             .addChild((new Declaration("background-color"))
                     .addChild(new ColorLiteral("#ffffff")))
             .addChild((new Declaration("width"))
@@ -104,8 +104,8 @@ public class Fixtures {
 	        color: LinkColor;
         }
         */
-        stylesheet.addChild((new Stylerule())
-			.addChild(new TagSelector("a"))
+        stylesheet.addChild((new Ruleset())
+			.addChild(new ElementSelector("a"))
 			.addChild((new Declaration("color"))
 				.addChild(new VariableReference("LinkColor")))
 		);
@@ -114,7 +114,7 @@ public class Fixtures {
 	            width: 520px;
             }
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new IdSelector("#menu"))
 			.addChild((new Declaration("width"))
 				.addChild(new PixelLiteral("520px")))
@@ -124,7 +124,7 @@ public class Fixtures {
 	            color: #000000;
             }
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new ClassSelector(".menu"))
 			.addChild((new Declaration("color"))
 				.addChild(new ColorLiteral("#000000")))
@@ -150,11 +150,11 @@ public class Fixtures {
 		);
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("AdjustColor"))
-				.addChild(new BoolLiteral(true))
+				.addChild(new BooleanLiteral(true))
 		);
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("UseLinkColor"))
-				.addChild(new BoolLiteral(false))
+				.addChild(new BooleanLiteral(false))
 		);
    	    /*
 	        p {
@@ -162,8 +162,8 @@ public class Fixtures {
 	        width: ParWidth;
             }
 	    */
-        stylesheet.addChild((new Stylerule())
-            .addChild(new TagSelector("p"))
+        stylesheet.addChild((new Ruleset())
+            .addChild(new ElementSelector("p"))
             .addChild((new Declaration("background-color"))
                     .addChild(new ColorLiteral("#ffffff")))
             .addChild((new Declaration("width"))
@@ -174,8 +174,8 @@ public class Fixtures {
 	        color: LinkColor;
         }
         */
-        stylesheet.addChild((new Stylerule())
-			.addChild(new TagSelector("a"))
+        stylesheet.addChild((new Ruleset())
+			.addChild(new ElementSelector("a"))
 			.addChild((new Declaration("color"))
 				.addChild(new VariableReference("LinkColor")))
 		);
@@ -184,12 +184,12 @@ public class Fixtures {
         	width: ParWidth + 2 * 10px;
             }
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new IdSelector("#menu"))
 			.addChild((new Declaration("width"))
-				.addChild((new AddOperation())
+				.addChild((new Addition())
                         .addChild(new VariableReference("ParWidth"))
-                        .addChild((new MultiplyOperation())
+                        .addChild((new Multiplication())
                                 .addChild(new ScalarLiteral("2") )
                                 .addChild(new PixelLiteral("10px"))
 
@@ -199,7 +199,7 @@ public class Fixtures {
 	            color: #000000;
             }
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new ClassSelector(".menu"))
 			.addChild((new Declaration("color"))
 				.addChild(new ColorLiteral("#000000")))
@@ -225,11 +225,11 @@ public class Fixtures {
 		);
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("AdjustColor"))
-				.addChild(new BoolLiteral(true))
+				.addChild(new BooleanLiteral(true))
 		);
 		stylesheet.addChild((new VariableAssignment())
 				.addChild(new VariableReference("UseLinkColor"))
-				.addChild(new BoolLiteral(false))
+				.addChild(new BooleanLiteral(false))
 		);
    	    /*
 	        p {
@@ -256,20 +256,20 @@ public class Fixtures {
 			}
 }
 	    */
-        stylesheet.addChild((new Stylerule())
-				.addChild(new TagSelector("p"))
+        stylesheet.addChild((new Ruleset())
+				.addChild(new ElementSelector("p"))
 					.addChild((new Declaration("background-color"))
 							.addChild(new ColorLiteral("#ffffff")))
 					.addChild((new Declaration("width"))
 							.addChild(new VariableReference("ParWidth")))
-					.addChild((new IfClause())
+					.addChild((new ConditionalIf())
 						.addChild(new VariableReference("AdjustColor"))
 						.addChild((new Declaration("color")
 								.addChild(new ColorLiteral("#124532"))))
-							.addChild((new IfClause())
+							.addChild((new ConditionalIf())
 									.addChild(new VariableReference("UseLinkColor"))
 									.addChild(new Declaration("background-color").addChild(new VariableReference("LinkColor")))
-									.addChild((new ElseClause())
+									.addChild((new ConditionalElse())
 											.addChild(new Declaration("background-color").addChild(new ColorLiteral("#000000")))
 
 									)
@@ -282,8 +282,8 @@ public class Fixtures {
 	        color: LinkColor;
         }
         */
-        stylesheet.addChild((new Stylerule())
-			.addChild(new TagSelector("a"))
+        stylesheet.addChild((new Ruleset())
+			.addChild(new ElementSelector("a"))
 			.addChild((new Declaration("color"))
 				.addChild(new VariableReference("LinkColor"))
             )
@@ -293,10 +293,10 @@ public class Fixtures {
         	width: ParWidth + 20px;
             }
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new IdSelector("#menu"))
 			.addChild((new Declaration("width"))
-				.addChild((new AddOperation())
+				.addChild((new Addition())
                         .addChild(new VariableReference("ParWidth"))
                         .addChild(new PixelLiteral("20px"))
                 )
@@ -312,7 +312,7 @@ public class Fixtures {
 			}
 
         */
-        stylesheet.addChild((new Stylerule())
+        stylesheet.addChild((new Ruleset())
 			.addChild(new ClassSelector(".menu"))
 
 			.addChild((new Declaration("color"))

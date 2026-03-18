@@ -50,7 +50,7 @@ class ParserTest {
 			fail(errorListener.toString());
 		}
 
-		return listener.getAST();
+		return listener.getAst();
 	}
 
 	@Test

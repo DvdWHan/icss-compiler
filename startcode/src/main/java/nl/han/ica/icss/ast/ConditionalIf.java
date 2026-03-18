@@ -3,25 +3,25 @@ package nl.han.ica.icss.ast;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class IfClause extends AstNode {
+public class ConditionalIf extends AstNode {
 
 
     public Expression conditionalExpression;
     public ArrayList<AstNode> body = new ArrayList<>();
-    public ElseClause elseClause;
+    public ConditionalElse conditionalElse;
 
-    public IfClause() { }
+    public ConditionalIf() { }
 
-    public IfClause(Expression conditionalExpression, ArrayList<AstNode> body) {
+    public ConditionalIf(Expression conditionalExpression, ArrayList<AstNode> body) {
 
         this.conditionalExpression = conditionalExpression;
         this.body = body;
     }
-    public IfClause(Expression conditionalExpression, ArrayList<AstNode> body, ElseClause elseClause) {
+    public ConditionalIf(Expression conditionalExpression, ArrayList<AstNode> body, ConditionalElse conditionalElse) {
 
         this.conditionalExpression = conditionalExpression;
         this.body = body;
-        this.elseClause = elseClause;
+        this.conditionalElse = conditionalElse;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class IfClause extends AstNode {
         ArrayList<AstNode> children = new ArrayList<>();
         children.add(conditionalExpression);
         children.addAll(body);
-        if (elseClause!=null)
-            children.add(elseClause);
+        if (conditionalElse != null)
+            children.add(conditionalElse);
 
         return children;
     }
@@ -43,8 +43,8 @@ public class IfClause extends AstNode {
     public AstNode addChild(AstNode child) {
         if(child instanceof Expression)
             conditionalExpression  = (Expression) child;
-        else if (child instanceof ElseClause)
-            elseClause = (ElseClause) child;
+        else if (child instanceof ConditionalElse)
+            conditionalElse = (ConditionalElse) child;
         else
             body.add(child);
 
@@ -55,24 +55,24 @@ public class IfClause extends AstNode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        IfClause ifClause = (IfClause) o;
-        if (this.elseClause == null)
-            return Objects.equals(conditionalExpression, ifClause.getConditionalExpression()) &&
-                Objects.equals(body, ifClause.body);
+        ConditionalIf conditionalIf = (ConditionalIf) o;
+        if (this.conditionalElse == null)
+            return Objects.equals(conditionalExpression, conditionalIf.getConditionalExpression()) &&
+                   Objects.equals(body, conditionalIf.body);
         else
-            return Objects.equals(conditionalExpression, ifClause.getConditionalExpression()) &&
-                    Objects.equals(body, ifClause.body) &&
-                    Objects.equals(elseClause, ifClause.elseClause);
+            return Objects.equals(conditionalExpression, conditionalIf.getConditionalExpression()) &&
+                   Objects.equals(body, conditionalIf.body) &&
+                   Objects.equals(conditionalElse, conditionalIf.conditionalElse);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(conditionalExpression, body, elseClause);
+        return Objects.hash(conditionalExpression, body, conditionalElse);
     }
 
     public Expression getConditionalExpression() {
         return conditionalExpression;
     }
-    public ElseClause getElseClause() { return elseClause; }
+    public ConditionalElse getElseClause() { return conditionalElse; }
 }
