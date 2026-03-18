@@ -201,7 +201,7 @@ public class MainGui extends Application {
         if (pipeline.isParsed()) {
             feedbackPane.addLine("Parsing succeeded");
         }
-        astPane.update(pipeline.getAST());
+        astPane.update(pipeline.getAst());
         updateToolbar();
     }
 
@@ -215,7 +215,7 @@ public class MainGui extends Application {
                 feedbackPane.addLine(e);
             }
         }
-        astPane.update(pipeline.getAST());
+        astPane.update(pipeline.getAst());
         updateToolbar();
     }
 
@@ -226,7 +226,7 @@ public class MainGui extends Application {
        if (pipeline.isTransformed()) {
            feedbackPane.addLine("Transformation succeeded");
        }
-       astPane.update(pipeline.getAST());
+       astPane.update(pipeline.getAst());
        updateToolbar();
     }
 
