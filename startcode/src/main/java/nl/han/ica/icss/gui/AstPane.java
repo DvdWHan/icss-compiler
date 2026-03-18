@@ -48,7 +48,7 @@ public class AstPane extends BorderPane {
      * @param ast
      */
     public void update(Ast ast) {
-        content.setRoot(astNodeToTreeItem(ast.root));
+        content.setRoot(astNodeToTreeItem(ast.getRoot()));
     }
     private TreeItem<AstNode> astNodeToTreeItem(AstNode astNode) {
 
