@@ -1,58 +1,45 @@
 package nl.han.ica.icss.ast;
 
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
-import java.util.Objects;
 
-/*
- * A Declaration defines a style property. Declarations are things like "width: 100px"
- */
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class Declaration extends AstNode {
-	public Property property;
-	public Expression expression;
+  private Property property = null;
+  private Expression expression = null;
 
-	public Declaration() {
-		super();
-	}
-	public Declaration(String property) {
-		super();
-		this.property = new Property(property);
-	}
-	@Override
-	public String getNodeLabel() {
-	    return "Declaration";
-	}
+  public Declaration(String property) {
+    this.property = new Property(property);
+  }
 
-	@Override
-	public ArrayList<AstNode> getChildren() {
+  @Override
+  public String getNodeLabel() {
+    return "Declaration";
+  }
 
-		ArrayList<AstNode> children = new ArrayList<>();
-		if(property != null)
-		    children.add(property);
-		if(expression != null)
-		    children.add(expression);
-		return children;
-	}
-	@Override
-	public AstNode addChild(AstNode child) {
-		if(child instanceof Property) {
-			property = (Property) child;
-		} else if(child instanceof Expression) {
-			expression = (Expression) child;
-		}
-		return this;
-	}
+  @Override
+  public ArrayList<AstNode> getChildren() {
+    ArrayList<AstNode> children = new ArrayList<>();
+    if (property != null) {
+      children.add(property);
+    }
+    if (expression != null) {
+      children.add(expression);
+    }
+    return children;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		Declaration that = (Declaration) o;
-		return Objects.equals(property, that.property) &&
-				Objects.equals(expression, that.expression);
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(property, expression);
-	}
+  @SuppressWarnings("PatternVariableHidesField")
+  @Override
+  public AstNode addChild(AstNode child) {
+    if (child instanceof Property property) {
+      this.property = property;
+    } else if (child instanceof Expression expression) {
+      this.expression = expression;
+    }
+    return this;
+  }
 }
