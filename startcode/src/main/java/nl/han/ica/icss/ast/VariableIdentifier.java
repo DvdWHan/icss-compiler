@@ -25,4 +25,9 @@ public class VariableIdentifier implements Expression {
   public String getNodeLabel() {
     return "%s(%s)".formatted(getClass().getSimpleName(), identifier);
   }
+
+  @Override
+  public Type getType() {
+    return Type.IDENTIFIER;
+  }
 }

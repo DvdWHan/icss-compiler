@@ -15,4 +15,9 @@ public class PixelLiteral implements Literal<Integer> {
   public PixelLiteral(String value) {
     this.value = Integer.parseInt(value.substring(1, value.length() - 2));
   }
+
+  @Override
+  public Type getType() {
+    return Type.PIXEL;
+  }
 }

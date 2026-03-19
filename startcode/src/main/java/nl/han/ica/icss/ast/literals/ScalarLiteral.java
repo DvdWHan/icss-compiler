@@ -15,4 +15,9 @@ public class ScalarLiteral implements Literal<Integer> {
   public ScalarLiteral(String value) {
     this.value = Integer.parseInt(value);
   }
+
+  @Override
+  public Type getType() {
+    return Type.SCALAR;
+  }
 }

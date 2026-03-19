@@ -15,4 +15,9 @@ public class PercentageLiteral implements Literal<Integer> {
   public PercentageLiteral(String value) {
     this.value = Integer.parseInt(value.substring(0, value.length() - 1));
   }
+
+  @Override
+  public Type getType() {
+    return Type.PERCENTAGE;
+  }
 }

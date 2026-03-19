@@ -30,4 +30,9 @@ public abstract class Operation implements Expression {
         }
         return this;
     }
+
+  @Override
+  public Type getType() {
+    return null;
+  }
 }

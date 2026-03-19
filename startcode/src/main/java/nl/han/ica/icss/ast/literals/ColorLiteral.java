@@ -11,4 +11,9 @@ import nl.han.ica.icss.ast.Literal;
 @SuppressWarnings("ClassCanBeRecord")
 public class ColorLiteral implements Literal<String> {
   private final String value;
+
+  @Override
+  public Type getType() {
+    return Type.COLOR;
+  }
 }

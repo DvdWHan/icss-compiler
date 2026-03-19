@@ -15,4 +15,9 @@ public class BooleanLiteral implements Literal<Boolean> {
   public BooleanLiteral(String value) {
     this.value = Boolean.parseBoolean(value);
   }
+
+  @Override
+  public Type getType() {
+    return Type.BOOLEAN;
+  }
 }
