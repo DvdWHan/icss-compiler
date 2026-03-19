@@ -12,8 +12,9 @@ public class HanStack<T> implements IHanStack<T> {
 
   @Override
   public T peek() {
-    ensureNotEmpty();
-    return top.value;
+//    ensureNotEmpty();
+//    return top.value;
+    return top != null ? top.value : null;
   }
 
   @Override
@@ -24,6 +25,7 @@ public class HanStack<T> implements IHanStack<T> {
 
   @Override
   public T pop() {
+    ensureNotEmpty();
     T result = peek();
     Node<T> newTop = top.next;
     top.next = null;
