@@ -1,57 +1,36 @@
 package nl.han.ica.icss.ast;
 
-import java.util.ArrayList;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
-import java.util.Objects;
 
-/**
- * An assignment binds a expression to an identifier.
- *
- */
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class VariableAssignment implements AstNode {
-	
-	public VariableReference name;
-	public Expression expression;
+  private VariableIdentifier identifier = null;
+  private Expression expression = null;
 
-	@Override
-	public String getNodeLabel() {
-		return "VariableAssignment (" + name.name + ")";
-	}
+  @Override
+  @SuppressWarnings("PatternVariableHidesField")
+  public AstNode addChild(AstNode child) {
+    if (child instanceof VariableIdentifier identifier) {
+      this.identifier = identifier;
+    } else if (child instanceof Expression expression) {
+      this.expression = expression;
+    }
+    return this;
+  }
 
-	@Override
-	public AstNode addChild(AstNode child) {
-		if(name == null) {
-			name = (VariableReference) child;
-		} else if(expression == null) {
-			expression = (Expression) child;
-		}
+  @Override
+  public List<AstNode> getChildren() {
+    return List.of(identifier, expression);
+  }
 
-		return this;
-	}
-
-	@Override
-	public List<AstNode> getChildren() {
-
-		ArrayList<AstNode> children = new ArrayList<>();
-		if(name != null)
-			children.add(name);
-		if(expression != null)
-			children.add(expression);
-		return children;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		VariableAssignment that = (VariableAssignment) o;
-		return Objects.equals(name, that.name) &&
-				Objects.equals(expression, that.expression);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, expression);
-	}
+  @Override
+  public String getNodeLabel() {
+    return "%s(%s=%s)".formatted(getClass().getSimpleName(), identifier.getNodeLabel(), expression.getNodeLabel());
+  }
 }
