@@ -1,6 +1,7 @@
 package nl.han.ica.icss.ast.unused;
 
 import nl.han.ica.icss.ast.AstNode;
+import nl.han.ica.icss.ast.Expression;
 
 import java.util.ArrayList;
 import java.util.List;

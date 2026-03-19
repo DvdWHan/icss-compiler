@@ -1,7 +1,6 @@
 package nl.han.ica.icss.ast;
 
 import nl.han.ica.icss.ast.literals.*;
-import nl.han.ica.icss.ast.unused.Expression;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package nl.han.ica.icss.ast.unused.types;
+package nl.han.ica.icss.ast.types;
 
 public enum ExpressionType {
   BOOLEAN,
@@ -7,4 +7,5 @@ public enum ExpressionType {
   PIXEL,
   SCALAR,
   UNDEFINED,
+  VARIABLE,
 }

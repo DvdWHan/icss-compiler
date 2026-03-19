@@ -1,6 +1,4 @@
-package nl.han.ica.icss.ast.unused;
-
-import nl.han.ica.icss.ast.AstNode;
+package nl.han.ica.icss.ast;
 
 import java.util.List;
 import java.util.Objects;

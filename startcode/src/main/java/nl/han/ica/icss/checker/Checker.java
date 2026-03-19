@@ -2,7 +2,7 @@ package nl.han.ica.icss.checker;
 
 import nl.han.ica.datastructures.IHanLinkedList;
 import nl.han.ica.icss.ast.Ast;
-import nl.han.ica.icss.ast.unused.types.ExpressionType;
+import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.HashMap;
 
