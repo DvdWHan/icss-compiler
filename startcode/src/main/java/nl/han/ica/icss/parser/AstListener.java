@@ -22,7 +22,6 @@ public class AstListener extends IcssBaseListener {
     addChildrenInstanceOf(stylesheet, Ruleset.class);
     addChildrenInstanceOf(stylesheet, VariableAssignment.class);
     ast.setRoot(stylesheet);
-    System.out.println(stylesheet);
   }
 
   @Override
