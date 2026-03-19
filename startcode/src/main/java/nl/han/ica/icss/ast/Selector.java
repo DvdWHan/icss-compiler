@@ -25,10 +25,10 @@ public interface Selector extends AstNode {
   }
 
   static Selector of(String identifier) {
-    if (identifier.startsWith("#")) {
+    if (identifier.startsWith(".")) {
       return new ClassSelector(identifier);
     }
-    if (identifier.startsWith(".")) {
+    if (identifier.startsWith("#")) {
       return new IdSelector(identifier);
     }
     return new ElementSelector(identifier);
