@@ -11,4 +11,8 @@ import nl.han.ica.icss.ast.Literal;
 @SuppressWarnings("ClassCanBeRecord")
 public class BooleanLiteral implements Literal<Boolean> {
   private final Boolean value;
+
+  public BooleanLiteral(String value) {
+    this.value = Boolean.parseBoolean(value);
+  }
 }

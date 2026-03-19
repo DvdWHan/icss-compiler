@@ -3,6 +3,7 @@ package nl.han.ica.icss.ast;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.han.ica.datastructures.IHanStack;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.List;
@@ -45,5 +46,20 @@ public interface AstNode {
     public boolean hasError() {
       return error != null;
     }
+  }
+
+  static String toString(AstNode node) {
+    if (node == null) {
+      return "";
+    }
+    var sb = new StringBuilder("[");
+    sb.append(node.getNodeLabel());
+    for (AstNode child : node.getChildren()) {
+      sb.append(toString(child)).append(", ");
+    }
+    if (!node.getChildren().isEmpty()) {
+      sb.delete(sb.length() - 2, sb.length());
+    }
+    return sb.append("]").toString();
   }
 }

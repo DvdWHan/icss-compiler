@@ -22,4 +22,9 @@ public class Stylesheet implements AstNode {
     rulesets.add(child);
     return this;
   }
+
+  @Override
+  public String toString() {
+    return AstNode.toString(this);
+  }
 }
