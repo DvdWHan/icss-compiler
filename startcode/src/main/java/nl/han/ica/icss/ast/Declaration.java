@@ -11,11 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 public class Declaration implements AstNode {
   private Property property = null;
-  private Literal<?> literal = null;
+  private Expression expression = null;
 
   @Override
   public List<AstNode> getChildren() {
-    return List.of(property, literal);
+    return List.of(property, expression);
   }
 
   @Override
@@ -23,8 +23,8 @@ public class Declaration implements AstNode {
   public AstNode addChild(AstNode child) {
     if (child instanceof Property property) {
       this.property = property;
-    } else if (child instanceof Literal<?> literal) {
-      this.literal = literal;
+    } else if (child instanceof Expression expression) {
+      this.expression = expression;
     }
     return this;
   }

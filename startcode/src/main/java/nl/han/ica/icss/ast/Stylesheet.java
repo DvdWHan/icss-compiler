@@ -10,16 +10,24 @@ import java.util.List;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class Stylesheet implements AstNode {
+  private final List<AstNode> variableAssignments = new ArrayList<>();
   private final List<AstNode> rulesets = new ArrayList<>();
 
   @Override
   public List<AstNode> getChildren() {
-    return Collections.unmodifiableList(this.rulesets);
+    List<AstNode> children = new ArrayList<>();
+    children.addAll(variableAssignments);
+    children.addAll(rulesets);
+    return Collections.unmodifiableList(children);
   }
 
   @Override
   public AstNode addChild(AstNode child) {
-    rulesets.add(child);
+    if (child instanceof VariableAssignment variableAssignment) {
+      variableAssignments.add(variableAssignment);
+    } else if (child instanceof Ruleset ruleset) {
+      rulesets.add(ruleset);
+    }
     return this;
   }
 
