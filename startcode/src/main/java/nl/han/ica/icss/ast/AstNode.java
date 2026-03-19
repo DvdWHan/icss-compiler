@@ -3,7 +3,6 @@ package nl.han.ica.icss.ast;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.han.ica.datastructures.IHanStack;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.List;
@@ -49,17 +48,27 @@ public interface AstNode {
   }
 
   static String toString(AstNode node) {
-    if (node == null) {
-      return "";
-    }
-    var sb = new StringBuilder("[");
+    var sb = new StringBuilder();
+    toString(node, sb, 0);
+    return sb.toString();
+  }
+
+  private static void toString(AstNode node, StringBuilder sb, int indentation) {
+    sb.append("\t".repeat(indentation));
     sb.append(node.getNodeLabel());
-    for (AstNode child : node.getChildren()) {
-      sb.append(toString(child)).append(", ");
+    if (node.getChildren().isEmpty()) {
+      return;
     }
-    if (!node.getChildren().isEmpty()) {
-      sb.delete(sb.length() - 2, sb.length());
+    sb.append("[\n");
+    List<AstNode> children = node.getChildren();
+    for (int i = 0; i < children.size(); ++i) {
+      AstNode child = children.get(i);
+      toString(child, sb, indentation + 1);
+      if (i < children.size() - 1) {
+        sb.append(",");
+      }
+      sb.append("\n");
     }
-    return sb.append("]").toString();
+    sb.append("\t".repeat(indentation)).append("]");
   }
 }
