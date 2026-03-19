@@ -41,7 +41,7 @@ idSelector: PERIOD SNAKE_CASE_IDENTIFIER;
 classSelector: HASHTAG SNAKE_CASE_IDENTIFIER;
 
 declarations: declaration*;
-declaration: property COLON value SEMICOLON;
+declaration: property COLON literal SEMICOLON;
 // only these properties are allowed
 property: 'color' | 'background-color' | 'width' | 'height';
-value: MINUS? (SCALAR | PERCENTAGE | PIXEL_SIZE) | COLOR;
+literal: MINUS? (SCALAR | PERCENTAGE | PIXEL_SIZE) | COLOR;
