@@ -11,18 +11,18 @@ import nl.han.ica.icss.ast.selectors.IdSelector;
 public class Fixtures {
   public static Ast uncheckedLevel0() {
     Stylesheet stylesheet = new Stylesheet();
-    stylesheet.addChild((new Ruleset(new ElementSelector("p")))
-        .addChild((new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
-        .addChild((new Declaration(new Property("width"), new PixelLiteral("500px"))))
+    stylesheet.addChild(new Ruleset().addChild(new ElementSelector("p")).addChild(new Declarations()
+        .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
+        .addChild(new Declaration(new Property("width"), new PixelLiteral("500px")))
     ));
-    stylesheet.addChild((new Ruleset(new ElementSelector("a")))
-        .addChild((new Declaration(new Property("color"), new ColorLiteral("#ff0000")))
+    stylesheet.addChild(new Ruleset().addChild(new ElementSelector("a")).addChild(new Declarations()
+        .addChild(new Declaration(new Property("color"), new ColorLiteral("#ff0000")))
     ));
-    stylesheet.addChild((new Ruleset(new ClassSelector("#menu")))
-        .addChild((new Declaration(new Property("width"), new PixelLiteral("520px")))
+    stylesheet.addChild(new Ruleset().addChild(new ClassSelector("#menu")).addChild(new Declarations()
+        .addChild(new Declaration(new Property("width"), new PixelLiteral("520px")))
     ));
-    stylesheet.addChild((new Ruleset(new IdSelector(".menu")))
-        .addChild((new Declaration(new Property("color"), new ColorLiteral("#000000")))
+    stylesheet.addChild(new Ruleset().addChild(new IdSelector(".menu")).addChild(new Declarations()
+        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
     ));
     return new Ast(stylesheet);
   }
