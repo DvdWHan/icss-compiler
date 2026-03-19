@@ -10,6 +10,6 @@ public interface Expression extends AstNode {
     PIXEL,
     SCALAR,
     UNDEFINED,
-    VARIABLE,
+    IDENTIFIER,
   }
 }
