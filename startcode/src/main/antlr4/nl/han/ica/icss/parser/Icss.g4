@@ -26,14 +26,15 @@ PERCENTAGE: [0-9]+ '%';
 SCALAR: [0-9]+;
 COLOR: '#' [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]; // colors must be six hexadecimal characters long
 
-// elements, ids, and classes must be snake-case
+// elements, classes, and ids must be snake-case
 SNAKE_CASE_IDENTIFIER: [a-z][a-z0-9\-]*;
+// variables must be PascalCase
 PASCAL_CASE_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 
 // grammar rule names inspired by https://www.w3.org/TR/CSS2/grammar.html#grammar
 stylesheet: variableAssignment* ruleset* EOF;
 
-// variable assignment can only occur at the top of the stylesheet or individual rulesets
+// variable assignments can only occur at the top of the stylesheet or individual rulesets
 variableAssignment: variableIdentifier COLON_EQUALS expression SEMICOLON;
 variableIdentifier: PASCAL_CASE_IDENTIFIER;
 
