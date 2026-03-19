@@ -36,18 +36,18 @@ public class Fixtures {
     stylesheet.addChild(new VariableAssignment(new VariableIdentifier("UseLinkColor"), new BooleanLiteral(false)));
 
     stylesheet.addChild(new Ruleset(new ElementSelector("p"))
-        .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff"))
+        .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
         .addChild(new Declaration(new Property("width"), new VariableIdentifier("ParWidth")))
-    ));
+    );
     stylesheet.addChild(new Ruleset(new ElementSelector("a"))
-        .addChild(new Declaration(new Property("color"), new VariableIdentifier("LinkColor"))
-    ));
+        .addChild(new Declaration(new Property("color"), new VariableIdentifier("LinkColor")))
+    );
     stylesheet.addChild(new Ruleset(new IdSelector("#menu"))
-        .addChild(new Declaration(new Property("width"), new PixelLiteral("520px"))
-    ));
+        .addChild(new Declaration(new Property("width"), new PixelLiteral("520px")))
+    );
     stylesheet.addChild(new Ruleset(new ClassSelector(".menu"))
-        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000"))
-    ));
+        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
+    );
 		return new Ast(stylesheet);
 	}
 

@@ -13,11 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 public class Ruleset implements AstNode {
   private Selector selector = null;
-  private Declarations declarations = null;
+  private final List<Declaration> declarations = new ArrayList<>();
 
   @Override
   public List<AstNode> getChildren() {
-    return List.of(selector, declarations);
+    List<AstNode> children = new ArrayList<>();
+    children.add(selector);
+    children.addAll(declarations);
+    return Collections.unmodifiableList(children);
   }
 
   @Override
@@ -25,8 +28,8 @@ public class Ruleset implements AstNode {
   public AstNode addChild(AstNode child) {
     if (child instanceof Selector selector) {
       this.selector = selector;
-    } else if (child instanceof Declarations declarations) {
-      this.declarations = declarations;
+    } else if (child instanceof Declaration declaration) {
+      this.declarations.add(declaration);
     }
     return this;
   }
