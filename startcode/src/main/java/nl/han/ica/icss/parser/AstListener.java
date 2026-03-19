@@ -7,8 +7,10 @@ import nl.han.ica.datastructures.HanStack;
 import nl.han.ica.datastructures.IHanStack;
 import nl.han.ica.icss.ast.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 @Getter
 @NoArgsConstructor
@@ -20,46 +22,14 @@ public class AstListener extends IcssBaseListener {
   public void exitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     addChildrenInstanceOf(stylesheet, Ruleset.class);
-    addChildrenInstanceOf(stylesheet, VariableAssignment.class);
     ast.setRoot(stylesheet);
-    System.out.println(stylesheet);
-  }
-
-  @Override
-  public void exitVariableAssignment(IcssParser.VariableAssignmentContext context) {
-    var expression = (Expression)nodes.pop();
-    var variableIdentifier = (VariableIdentifier)nodes.pop();
-    var variableAssignment = new VariableAssignment(variableIdentifier, expression);
-    nodes.push(variableAssignment);
-  }
-
-  @Override
-  public void exitVariableIdentifier(IcssParser.VariableIdentifierContext context) {
-    String identifier = context.getText();
-    var variableIdentifier = new VariableIdentifier(identifier);
-    nodes.push(variableIdentifier);
-  }
-
-  /*@Override
-  public void exitExpression(IcssParser.ExpressionContext context) {
-    String expressionValue = context.getText();
-    Expression expression = Expression.of(expressionValue);
-    nodes.push(expression);
-  }*/
-
-  @Override
-  public void exitLiteral(IcssParser.LiteralContext context) {
-    String literalValue = context.getText();
-    Literal<?> literal = Literal.of(literalValue);
-    nodes.push(literal);
   }
 
   @Override
   public void exitRuleset(IcssParser.RulesetContext context) {
-    var ruleset = new Ruleset();
-    addChildrenInstanceOf(ruleset, Declaration.class);
+    var declarations = (Declarations)nodes.pop();
     var selector = (Selector)nodes.pop();
-    ruleset.addChild(selector);
+    var ruleset = new Ruleset(selector, declarations);
     nodes.push(ruleset);
   }
 
@@ -71,10 +41,17 @@ public class AstListener extends IcssBaseListener {
   }
 
   @Override
+  public void exitDeclarations(IcssParser.DeclarationsContext context) {
+    var declarations = new Declarations();
+    addChildrenInstanceOf(declarations, Declaration.class);
+    nodes.push(declarations);
+  }
+
+  @Override
   public void exitDeclaration(IcssParser.DeclarationContext context) {
-    var expression = (Expression)nodes.pop();
+    var literal = (Literal<?>)nodes.pop();
     var property = (Property)nodes.pop();
-    var declaration = new Declaration(property, expression);
+    var declaration = new Declaration(property, literal);
     nodes.push(declaration);
   }
 
@@ -83,6 +60,13 @@ public class AstListener extends IcssBaseListener {
     String propertyName = context.getText();
     var property = new Property(propertyName);
     nodes.push(property);
+  }
+
+  @Override
+  public void exitLiteral(IcssParser.LiteralContext context) {
+    String literalValue = context.getText();
+    var literal = Literal.of(literalValue);
+    nodes.push(literal);
   }
 
   /// This method only exists because we have a custom {@code Stack} implementation.
