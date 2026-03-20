@@ -57,6 +57,7 @@ public class AstListener extends IcssBaseListener {
   public void exitRuleset(IcssParser.RulesetContext context) {
     var ruleset = new Ruleset();
     addChildrenInstanceOf(ruleset, Declaration.class);
+    addChildrenInstanceOf(ruleset, VariableAssignment.class);
     var selector = (Selector)nodes.pop();
     ruleset.addChild(selector);
     nodes.push(ruleset);
