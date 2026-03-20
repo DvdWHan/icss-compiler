@@ -1,8 +1,8 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.BooleanLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
+import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.ElementSelector;
@@ -11,42 +11,27 @@ import nl.han.ica.icss.ast.selectors.IdSelector;
 // @formatter:off
 public class Fixtures {
   public static Ast uncheckedLevel0() {
-    Stylesheet stylesheet = new Stylesheet();
+    var stylesheet = new Stylesheet();
     stylesheet.addChild(new Ruleset(new ElementSelector("p"))
         .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
+        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
+    );
+    stylesheet.addChild(new Ruleset(new IdSelector("#menu"))
         .addChild(new Declaration(new Property("width"), new PixelLiteral("500px")))
     );
-    stylesheet.addChild(new Ruleset(new ElementSelector("a"))
-        .addChild(new Declaration(new Property("color"), new ColorLiteral("#ff0000")))
-    );
-    stylesheet.addChild(new Ruleset().addChild(new IdSelector("#menu"))
-        .addChild(new Declaration(new Property("width"), new PixelLiteral("520px")))
-    );
-    stylesheet.addChild(new Ruleset().addChild(new ClassSelector(".menu"))
-        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
+    stylesheet.addChild(new Ruleset(new ClassSelector(".menu"))
+        .addChild(new Declaration(new Property("height"), new PercentageLiteral("100%")))
     );
     return new Ast(stylesheet);
   }
 
 	public static Ast uncheckedLevel1() {
-		Stylesheet stylesheet = new Stylesheet();
-		stylesheet.addChild(new VariableAssignment(new VariableIdentifier("LinkColor"), new ColorLiteral("#ff0000")));
-    stylesheet.addChild(new VariableAssignment(new VariableIdentifier("ParWidth"), new PixelLiteral("500px")));
-    stylesheet.addChild(new VariableAssignment(new VariableIdentifier("AdjustColor"), new BooleanLiteral(true)));
-    stylesheet.addChild(new VariableAssignment(new VariableIdentifier("UseLinkColor"), new BooleanLiteral(false)));
-
+		var stylesheet = new Stylesheet();
+    stylesheet.addChild(new VariableAssignment(new VariableIdentifier("BackgroundColor"), new ColorLiteral("#ffffff")));
     stylesheet.addChild(new Ruleset(new ElementSelector("p"))
-        .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
-        .addChild(new Declaration(new Property("width"), new VariableIdentifier("ParWidth")))
-    );
-    stylesheet.addChild(new Ruleset(new ElementSelector("a"))
-        .addChild(new Declaration(new Property("color"), new VariableIdentifier("LinkColor")))
-    );
-    stylesheet.addChild(new Ruleset(new IdSelector("#menu"))
-        .addChild(new Declaration(new Property("width"), new PixelLiteral("520px")))
-    );
-    stylesheet.addChild(new Ruleset(new ClassSelector(".menu"))
-        .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
+        .addChild(new VariableAssignment(new VariableIdentifier("ParagraphWidth"), new PixelLiteral("500px")))
+        .addChild(new Declaration(new Property("background-color"), new VariableIdentifier("BackgroundColor")))
+        .addChild(new Declaration(new Property("width"), new VariableIdentifier("ParagraphWidth")))
     );
 		return new Ast(stylesheet);
 	}
