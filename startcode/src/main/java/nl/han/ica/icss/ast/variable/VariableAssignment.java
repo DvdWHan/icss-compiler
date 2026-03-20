@@ -1,17 +1,25 @@
-package nl.han.ica.icss.ast;
+package nl.han.ica.icss.ast.variable;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import nl.han.ica.icss.ast.AstNode;
+import nl.han.ica.icss.ast.expression.Expression;
 
 import java.util.List;
 
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public class VariableAssignment implements AstNode {
+@EqualsAndHashCode(callSuper = true)
+public class VariableAssignment extends AstNode {
   private VariableIdentifier identifier = null;
   private Expression expression = null;
+
+  public VariableAssignment(VariableIdentifier identifier, Expression expression) {
+    this.identifier = identifier;
+    this.expression = expression;
+  }
+
+  @Override
+  public List<AstNode> getChildren() {
+    return List.of(identifier, expression);
+  }
 
   @Override
   @SuppressWarnings("PatternVariableHidesField")
@@ -22,11 +30,6 @@ public class VariableAssignment implements AstNode {
       this.expression = expression;
     }
     return this;
-  }
-
-  @Override
-  public List<AstNode> getChildren() {
-    return List.of(identifier, expression);
   }
 
   @Override

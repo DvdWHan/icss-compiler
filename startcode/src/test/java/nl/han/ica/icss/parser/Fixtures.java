@@ -1,25 +1,27 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.ColorLiteral;
-import nl.han.ica.icss.ast.literals.PercentageLiteral;
-import nl.han.ica.icss.ast.literals.PixelLiteral;
-import nl.han.ica.icss.ast.selectors.ClassSelector;
-import nl.han.ica.icss.ast.selectors.ElementSelector;
-import nl.han.ica.icss.ast.selectors.IdSelector;
+import nl.han.ica.icss.ast.literal.ColorLiteral;
+import nl.han.ica.icss.ast.literal.numeric.PercentageLiteral;
+import nl.han.ica.icss.ast.literal.numeric.PixelLiteral;
+import nl.han.ica.icss.ast.selector.ClassSelector;
+import nl.han.ica.icss.ast.selector.ElementSelector;
+import nl.han.ica.icss.ast.selector.IdSelector;
+import nl.han.ica.icss.ast.variable.VariableAssignment;
+import nl.han.ica.icss.ast.variable.VariableIdentifier;
 
 // @formatter:off
 public class Fixtures {
   public static Ast uncheckedLevel0() {
     var stylesheet = new Stylesheet();
-    stylesheet.addChild(new Ruleset(new ElementSelector("p"))
+    stylesheet.addChild(new Ruleset().addChild(new ElementSelector("p"))
         .addChild(new Declaration(new Property("background-color"), new ColorLiteral("#ffffff")))
         .addChild(new Declaration(new Property("color"), new ColorLiteral("#000000")))
     );
-    stylesheet.addChild(new Ruleset(new IdSelector("#menu"))
+    stylesheet.addChild(new Ruleset().addChild(new IdSelector("#menu"))
         .addChild(new Declaration(new Property("width"), new PixelLiteral("500px")))
     );
-    stylesheet.addChild(new Ruleset(new ClassSelector(".menu"))
+    stylesheet.addChild(new Ruleset().addChild(new ClassSelector(".menu"))
         .addChild(new Declaration(new Property("height"), new PercentageLiteral("100%")))
     );
     return new Ast(stylesheet);
@@ -28,7 +30,7 @@ public class Fixtures {
 	public static Ast uncheckedLevel1() {
 		var stylesheet = new Stylesheet();
     stylesheet.addChild(new VariableAssignment(new VariableIdentifier("BackgroundColor"), new ColorLiteral("#ffffff")));
-    stylesheet.addChild(new Ruleset(new ElementSelector("p"))
+    stylesheet.addChild(new Ruleset().addChild(new ElementSelector("p"))
         .addChild(new VariableAssignment(new VariableIdentifier("ParagraphWidth"), new PixelLiteral("500px")))
         .addChild(new Declaration(new Property("background-color"), new VariableIdentifier("BackgroundColor")))
         .addChild(new Declaration(new Property("width"), new VariableIdentifier("ParagraphWidth")))

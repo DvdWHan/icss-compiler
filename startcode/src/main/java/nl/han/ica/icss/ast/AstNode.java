@@ -1,55 +1,35 @@
 package nl.han.ica.icss.ast;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
-public interface AstNode {
-  Map<AstNode, ErrorHandler> ERROR_HANDLERS = new WeakHashMap<>();
+@EqualsAndHashCode
+public abstract class AstNode {
+  @Getter @Setter private SemanticError error = null;
 
-  List<AstNode> getChildren();
+  public List<AstNode> getChildren() {
+    return List.of();
+  }
 
-  AstNode addChild(AstNode child);
+  public AstNode addChild(AstNode child) {
+    return this;
+  }
 
-  default String getNodeLabel() {
+  public String getNodeLabel() {
     return getClass().getSimpleName();
   }
 
-  default ErrorHandler getErrorHandler() {
-    return ERROR_HANDLERS.computeIfAbsent(this, k -> new ErrorHandler());
+  public boolean hasError() {
+    return error != null;
   }
 
-  default SemanticError getError() {
-    return getErrorHandler().getError();
-  }
-
-  default void setError(SemanticError error) {
-    getErrorHandler().setError(error);
-  }
-
-  default boolean hasError() {
-    return getErrorHandler().hasError();
-  }
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  final class ErrorHandler {
-    private SemanticError error = null;
-
-    public boolean hasError() {
-      return error != null;
-    }
-  }
-
-  static String toString(AstNode node) {
+  public String toString() {
     var sb = new StringBuilder();
-    toString(node, sb, 0);
+    toString(this, sb, 0);
     return sb.toString();
   }
 

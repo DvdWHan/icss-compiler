@@ -2,20 +2,21 @@ package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import nl.han.ica.icss.ast.variable.VariableAssignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@EqualsAndHashCode
 @NoArgsConstructor
-public class Stylesheet implements AstNode {
+@EqualsAndHashCode(callSuper = true)
+public class Stylesheet extends AstNode {
   private final List<AstNode> variableAssignments = new ArrayList<>();
   private final List<AstNode> rulesets = new ArrayList<>();
 
   @Override
   public List<AstNode> getChildren() {
-    List<AstNode> children = new ArrayList<>();
+    var children = new ArrayList<AstNode>();
     children.addAll(variableAssignments);
     children.addAll(rulesets);
     return Collections.unmodifiableList(children);
@@ -29,10 +30,5 @@ public class Stylesheet implements AstNode {
       rulesets.add(ruleset);
     }
     return this;
-  }
-
-  @Override
-  public String toString() {
-    return AstNode.toString(this);
   }
 }

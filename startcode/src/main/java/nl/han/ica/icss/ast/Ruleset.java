@@ -1,17 +1,17 @@
 package nl.han.ica.icss.ast;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import nl.han.ica.icss.ast.selector.Selector;
+import nl.han.ica.icss.ast.variable.VariableAssignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@EqualsAndHashCode
 @NoArgsConstructor
-@AllArgsConstructor
-public class Ruleset implements AstNode {
+@EqualsAndHashCode(callSuper = true)
+public class Ruleset extends AstNode {
   private Selector selector = null;
   private final List<AstNode> variableAssignments = new ArrayList<>();
   private final List<AstNode> declarations = new ArrayList<>();

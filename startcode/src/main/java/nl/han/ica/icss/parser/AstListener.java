@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 import nl.han.ica.datastructures.HanStack;
 import nl.han.ica.datastructures.IHanStack;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.expression.Expression;
+import nl.han.ica.icss.ast.selector.Selector;
+import nl.han.ica.icss.ast.variable.VariableAssignment;
+import nl.han.ica.icss.ast.variable.VariableIdentifier;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,20 +43,6 @@ public class AstListener extends IcssBaseListener {
     nodes.push(variableIdentifier);
   }
 
-  /*@Override
-  public void exitExpression(IcssParser.ExpressionContext context) {
-    String expressionValue = context.getText();
-    Expression expression = Expression.of(expressionValue);
-    nodes.push(expression);
-  }*/
-
-  @Override
-  public void exitLiteral(IcssParser.LiteralContext context) {
-    String literalValue = context.getText();
-    Literal<?> literal = Literal.of(literalValue);
-    nodes.push(literal);
-  }
-
   @Override
   public void exitRuleset(IcssParser.RulesetContext context) {
     var ruleset = new Ruleset();
@@ -63,12 +53,12 @@ public class AstListener extends IcssBaseListener {
     nodes.push(ruleset);
   }
 
-  @Override
+  /*@Override TODO switch with individual selectors
   public void exitSelector(IcssParser.SelectorContext context) {
     String identifier = context.getText();
     var selector = Selector.of(identifier);
     nodes.push(selector);
-  }
+  }*/
 
   @Override
   public void exitDeclaration(IcssParser.DeclarationContext context) {
