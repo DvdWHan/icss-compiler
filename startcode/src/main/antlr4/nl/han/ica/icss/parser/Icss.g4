@@ -34,13 +34,6 @@ PASCAL_CASE_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 // grammar rule names inspired by https://www.w3.org/TR/CSS2/grammar.html#grammar
 stylesheet: variableAssignment* ruleset* EOF;
 
-// variable assignments can only occur at the top of the stylesheet or individual rulesets
-variableAssignment: variableIdentifier COLON_EQUALS expression SEMICOLON;
-variableIdentifier: PASCAL_CASE_IDENTIFIER;
-
-expression: literal | variableIdentifier;
-literal: FALSE | TRUE | MINUS? (SCALAR | PERCENTAGE | PIXEL_SIZE) | COLOR;
-
 ruleset: selector OPENING_BRACE variableAssignment* declaration* CLOSING_BRACE;
 
 selector: elementSelector | idSelector | classSelector;
@@ -48,5 +41,22 @@ elementSelector: SNAKE_CASE_IDENTIFIER;
 idSelector: HASHTAG SNAKE_CASE_IDENTIFIER;
 classSelector: PERIOD SNAKE_CASE_IDENTIFIER;
 
+// variable assignments can only occur at the top of the stylesheet or individual rulesets
+variableAssignment: variableIdentifier COLON_EQUALS expression SEMICOLON;
+variableIdentifier: PASCAL_CASE_IDENTIFIER;
+
 declaration: property COLON expression SEMICOLON;
 property: 'color' | 'background-color' | 'width' | 'height'; // only these properties are allowed
+
+expression: additionExpression;
+additionExpression: multiplicationExpression ((PLUS | MINUS) multiplicationExpression)*;
+multiplicationExpression: unaryExpression (ASTERISK unaryExpression)*;
+unaryExpression: (PLUS | MINUS) unaryExpression | primaryExpression;
+/*
+This grammar allows expressions like `FALSE+1`.
+This can be prevented by separating these literals from the others.
+However, it cannot accommodate for `MyVar:=FALSE;width:=MyVar+1`.
+Therefore, I ignore it now and let the checker evaluate it.
+*/
+primaryExpression: literal | variableIdentifier;
+literal: FALSE | TRUE | COLOR | SCALAR | PERCENTAGE | PIXEL_SIZE;
