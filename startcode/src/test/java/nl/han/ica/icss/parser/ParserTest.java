@@ -4,7 +4,6 @@ import nl.han.ica.icss.ast.Ast;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,6 +16,7 @@ class ParserTest {
   Ast parseTestFile(String resource) throws IOException {
     ClassLoader classLoader = this.getClass().getClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream(resource);
+    assert inputStream != null;
     CharStream charStream = CharStreams.fromStream(inputStream);
     IcssLexer lexer = new IcssLexer(charStream);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -44,16 +44,15 @@ class ParserTest {
     };
     parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
-
-    AstListener listener = new AstListener();
+    ParseTree parseTree = parser.stylesheet();
+    AstParser astParser = AstParser.build();
+    Ast ast = new Ast();
     try {
-      ParseTree parseTree = parser.stylesheet();
-      ParseTreeWalker walker = new ParseTreeWalker();
-      walker.walk(listener, parseTree);
+      ast = astParser.buildAst(parseTree);
     } catch (ParseCancellationException exception) {
       fail(errorListener.toString());
     }
-    return listener.getAst();
+    return ast;
   }
 
   @Test
@@ -76,11 +75,11 @@ class ParserTest {
     Ast exp = Fixtures.uncheckedLevel2();
     assertEquals(exp, sut);
   }
-//
-//  @Test
-//  void testParseLevel3() throws IOException {
-//    Ast sut = parseTestFile("level3.icss");
-//    Ast exp = Fixtures.uncheckedLevel3();
-//    assertEquals(exp, sut);
-//  }
+  //
+  //  @Test
+  //  void testParseLevel3() throws IOException {
+  //    Ast sut = parseTestFile("level3.icss");
+  //    Ast exp = Fixtures.uncheckedLevel3();
+  //    assertEquals(exp, sut);
+  //  }
 }

@@ -1,7 +1,6 @@
 package nl.han.ica.icss.parser;
 
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.expression.Expression;
@@ -18,13 +17,20 @@ import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
 import nl.han.ica.icss.ast.variable.VariableAssignment;
 import nl.han.ica.icss.ast.variable.VariableIdentifier;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-@Getter
 @NoArgsConstructor
-public class AstListener extends IcssBaseListener {
-  private final Ast ast = new Ast();
+public class AstListener extends IcssBaseListener implements AstParser {
   private final ParseTreeProperty<AstNode> nodes = new ParseTreeProperty<>();
+
+  public Ast buildAst(ParseTree parseTree) {
+    ParseTreeWalker walker = new ParseTreeWalker();
+    walker.walk(this, parseTree);
+    var stylesheet = (Stylesheet)nodes.get(parseTree);
+    return new Ast(stylesheet);
+  }
 
   @Override
   public void exitStylesheet(IcssParser.StylesheetContext context) {
@@ -35,7 +41,7 @@ public class AstListener extends IcssBaseListener {
     for (var rulesetContext : context.ruleset()) {
       stylesheet.addChild(nodes.get(rulesetContext));
     }
-    ast.setRoot(stylesheet);
+    nodes.put(context, stylesheet);
   }
 
   @Override
@@ -133,7 +139,7 @@ public class AstListener extends IcssBaseListener {
   public void exitPrimaryExpression(IcssParser.PrimaryExpressionContext context) {
     if (context.numericLiteral() != null) {
       var numericLiteralContext = context.numericLiteral();
-      NumericLiteral numericLiteral = null;
+      NumericLiteral numericLiteral;
       var stringValue = "";
       if (numericLiteralContext.scalarLiteral() != null) {
         stringValue = numericLiteralContext.scalarLiteral().getText();
