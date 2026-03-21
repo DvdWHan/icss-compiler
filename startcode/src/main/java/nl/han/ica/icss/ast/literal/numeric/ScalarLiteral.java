@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ScalarLiteral extends NumericLiteral {
   public ScalarLiteral(String stringValue) {
-    super(stringValue);
+    super(stringValue, Integer.parseInt(stringValue));
   }
 }

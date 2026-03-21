@@ -7,9 +7,4 @@ public class ElementSelector extends Selector {
   public ElementSelector(String identifier) {
     super(identifier);
   }
-
-  @Override
-  public String getStringValue() {
-    return getIdentifier();
-  }
 }

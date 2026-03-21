@@ -27,6 +27,7 @@ public abstract class AstNode {
     return error != null;
   }
 
+  // FIXME: generates NPE
   public String toString() {
     var sb = new StringBuilder();
     toString(this, sb, 0);
@@ -34,6 +35,9 @@ public abstract class AstNode {
   }
 
   private static void toString(AstNode node, StringBuilder sb, int indentation) {
+    if (node == null) {
+      return;
+    }
     sb.append("\t".repeat(indentation));
     sb.append(node.getNodeLabel());
     if (node.getChildren().isEmpty()) {

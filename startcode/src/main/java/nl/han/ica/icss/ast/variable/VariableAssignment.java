@@ -11,11 +11,6 @@ public class VariableAssignment extends AstNode {
   private VariableIdentifier identifier = null;
   private Expression expression = null;
 
-  public VariableAssignment(VariableIdentifier identifier, Expression expression) {
-    this.identifier = identifier;
-    this.expression = expression;
-  }
-
   @Override
   public List<AstNode> getChildren() {
     return List.of(identifier, expression);

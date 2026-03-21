@@ -12,10 +12,8 @@ public abstract class Selector extends AstNode {
     this.identifier = identifier;
   }
 
-  public abstract String getStringValue();
-
   @Override
   public String getNodeLabel() {
-    return "%s(%s)".formatted(getClass().getSimpleName(), getStringValue());
+    return "%s(%s)".formatted(getClass().getSimpleName(), getIdentifier());
   }
 }
