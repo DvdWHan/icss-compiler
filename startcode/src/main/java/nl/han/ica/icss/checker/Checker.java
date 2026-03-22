@@ -16,6 +16,8 @@ import nl.han.ica.icss.ast.variable.VariableIdentifier;
 
 import java.util.*;
 
+import static nl.han.ica.icss.ast.expression.Expression.Type;
+
 @NoArgsConstructor
 public class Checker {
   private final Deque<Map<String, Type>> scopes = new ArrayDeque<>();
@@ -223,19 +225,5 @@ public class Checker {
       }
     }
     return Type.UNDEFINED;
-  }
-
-  public enum Type {
-    BOOLEAN,
-    COLOR,
-    PERCENTAGE,
-    PIXEL,
-    SCALAR,
-    UNDEFINED;
-
-    @Override
-    public String toString() {
-      return this.name();
-    }
   }
 }

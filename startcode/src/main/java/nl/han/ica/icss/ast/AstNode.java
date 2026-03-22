@@ -2,12 +2,14 @@ package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.List;
 
 @EqualsAndHashCode
 public abstract class AstNode {
+  @Getter @Setter private AstNode parent;
   @Getter private SemanticError error = null;
 
   public List<AstNode> getChildren() {
@@ -16,6 +18,15 @@ public abstract class AstNode {
 
   public AstNode addChild(AstNode child) {
     return this;
+  }
+
+  public void removeChild(AstNode child) {
+    throw new UnsupportedOperationException();
+  }
+
+  public void replaceChild(AstNode oldChild, AstNode newChild) {
+    removeChild(oldChild);
+    addChild(newChild);
   }
 
   public String getNodeLabel() {

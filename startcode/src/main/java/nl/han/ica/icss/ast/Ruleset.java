@@ -28,6 +28,7 @@ public class Ruleset extends AstNode {
   @Override
   @SuppressWarnings("PatternVariableHidesField")
   public AstNode addChild(AstNode child) {
+    child.setParent(this);
     if (child instanceof Selector selector) {
       this.selector = selector;
     } else if (child instanceof VariableAssignment variableAssignment) {
@@ -36,5 +37,16 @@ public class Ruleset extends AstNode {
       this.declarations.add(declaration);
     }
     return this;
+  }
+
+  @Override
+  public void removeChild(AstNode child) {
+    if (child instanceof Selector) {
+      this.selector = null;
+    } else if (child instanceof VariableAssignment variableAssignment) {
+      variableAssignments.remove(variableAssignment);
+    } else if (child instanceof Declaration declaration) {
+      declarations.remove(declaration);
+    }
   }
 }

@@ -18,11 +18,21 @@ public class Declaration extends AstNode {
   @Override
   @SuppressWarnings("PatternVariableHidesField")
   public AstNode addChild(AstNode child) {
+    child.setParent(this);
     if (child instanceof Property property) {
       this.property = property;
     } else if (child instanceof Expression expression) {
       this.expression = expression;
     }
     return this;
+  }
+
+  @Override
+  public void removeChild(AstNode child) {
+    if (child instanceof Property) {
+      this.property = null;
+    } else if (child instanceof Expression) {
+      this.expression = null;
+    }
   }
 }

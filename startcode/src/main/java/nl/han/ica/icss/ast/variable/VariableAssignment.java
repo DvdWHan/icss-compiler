@@ -19,6 +19,7 @@ public class VariableAssignment extends AstNode {
   @Override
   @SuppressWarnings("PatternVariableHidesField")
   public AstNode addChild(AstNode child) {
+    child.setParent(this);
     if (child instanceof VariableIdentifier identifier) {
       this.identifier = identifier;
     } else if (child instanceof Expression expression) {

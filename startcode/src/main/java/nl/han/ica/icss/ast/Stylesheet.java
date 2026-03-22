@@ -24,11 +24,21 @@ public class Stylesheet extends AstNode {
 
   @Override
   public AstNode addChild(AstNode child) {
+    child.setParent(this);
     if (child instanceof VariableAssignment variableAssignment) {
       variableAssignments.add(variableAssignment);
     } else if (child instanceof Ruleset ruleset) {
       rulesets.add(ruleset);
     }
     return this;
+  }
+
+  @Override
+  public void removeChild(AstNode child) {
+    if (child instanceof VariableAssignment variableAssignment) {
+      variableAssignments.remove(variableAssignment);
+    } else if (child instanceof Ruleset ruleset) {
+      rulesets.remove(ruleset);
+    }
   }
 }

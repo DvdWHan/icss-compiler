@@ -7,7 +7,7 @@ import nl.han.ica.icss.checker.Checker;
 import nl.han.ica.icss.checker.SemanticError;
 import nl.han.ica.icss.generator.Generator;
 import nl.han.ica.icss.parser.*;
-import nl.han.ica.icss.transforms.Evaluator;
+import nl.han.ica.icss.transformer.Evaluator;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
