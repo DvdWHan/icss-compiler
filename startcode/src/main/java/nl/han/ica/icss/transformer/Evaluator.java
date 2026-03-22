@@ -142,7 +142,7 @@ public class Evaluator implements Transformer {
   private Value<?> visitDeclaration(Declaration declaration) {
     var expression = (Expression)declaration.getChildren().get(1);
     Value<?> value = visit(expression);
-    declaration.replaceChild(expression, toExpression(value));
+    replaceChild(declaration, expression, toExpression(value));
     return null;
   }
 
@@ -162,7 +162,12 @@ public class Evaluator implements Transformer {
   }
 
   private void replaceSelf(AstNode self, AstNode with) {
-    self.getParent().replaceChild(self, with);
+    replaceChild(self, self, with);
+  }
+
+  public void replaceChild(AstNode parent, AstNode oldChild, AstNode newChild) {
+    parent.removeChild(oldChild);
+    parent.addChild(newChild);
   }
 
   private void enterScope() {

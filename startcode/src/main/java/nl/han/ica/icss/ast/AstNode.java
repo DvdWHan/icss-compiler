@@ -24,11 +24,6 @@ public abstract class AstNode {
     throw new UnsupportedOperationException();
   }
 
-  public void replaceChild(AstNode oldChild, AstNode newChild) {
-    removeChild(oldChild);
-    addChild(newChild);
-  }
-
   public String getNodeLabel() {
     return getClass().getSimpleName();
   }
@@ -41,7 +36,6 @@ public abstract class AstNode {
     this.error = new SemanticError(message);
   }
 
-  // FIXME: generates NPE
   public String toString() {
     var sb = new StringBuilder();
     toString(this, sb, 0);
