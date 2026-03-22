@@ -28,11 +28,11 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
-      VariableAssignment variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
+      var variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
       stylesheet.addVariableAssignment(variableAssignment);
     }
     for (var rulesetContext : context.ruleset()) {
-      Ruleset ruleset = (Ruleset)visit(rulesetContext);
+      var ruleset = (Ruleset)visit(rulesetContext);
       stylesheet.addRuleset(ruleset);
     }
     return stylesheet;
@@ -82,9 +82,9 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
 
   @Override
   public AstNode visitAdditionExpression(IcssParser.AdditionExpressionContext context) {
-    MathExpression left = (MathExpression)visit(context.multiplicationExpression(0));
+    var left = (MathExpression)visit(context.multiplicationExpression(0));
     for (int i = 1; i < context.multiplicationExpression().size(); ++i) {
-      MathExpression right = (MathExpression)visit(context.multiplicationExpression(i));
+      var right = (MathExpression)visit(context.multiplicationExpression(i));
       String operator = context.getChild(2 * i - 1).getText();
       left = switch (operator) {
         case "+" -> new BinaryAddition(left, right);
@@ -97,9 +97,9 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
 
   @Override
   public AstNode visitMultiplicationExpression(IcssParser.MultiplicationExpressionContext context) {
-    MathExpression left = (MathExpression)visit(context.unaryExpression(0));
+    var left = (MathExpression)visit(context.unaryExpression(0));
     for (int i = 1; i < context.unaryExpression().size(); ++i) {
-      MathExpression right = (MathExpression)visit(context.unaryExpression(i));
+      var right = (MathExpression)visit(context.unaryExpression(i));
       String operator = context.getChild(2 * i - 1).getText();
       if (!operator.equals("*")) {
         throw new RuntimeException("Unexpected operator '%s': expected *".formatted(operator));
@@ -114,7 +114,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
     if (context.primaryExpression() != null) {
       return visit(context.primaryExpression());
     }
-    MathExpression operand = (MathExpression)visit(context.unaryExpression());
+    var operand = (MathExpression)visit(context.unaryExpression());
     String operator = context.getChild(0).getText();
     return switch (operator) {
       case "+" -> new UnaryPlus(operand);
@@ -158,11 +158,11 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
     var selector = (Selector)visit(context.selector());
     var ruleset = new Ruleset(selector);
     for (var variableAssignmentContext : context.variableAssignment()) {
-      VariableAssignment variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
+      var variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
       ruleset.addVariableAssignment(variableAssignment);
     }
     for (var declarationContext : context.declaration()) {
-      Declaration declaration = (Declaration)visit(declarationContext);
+      var declaration = (Declaration)visit(declarationContext);
       ruleset.addDeclaration(declaration);
     }
     return ruleset;
