@@ -5,6 +5,10 @@ import nl.han.ica.icss.ast.AstNode;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class Expression extends AstNode {
+  public String getStringValue() {
+    return "";
+  }
+
   public enum Type {
     BOOLEAN,
     COLOR,
