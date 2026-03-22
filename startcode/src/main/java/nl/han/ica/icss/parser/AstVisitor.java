@@ -1,19 +1,21 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.Expression;
-import nl.han.ica.icss.ast.expression.math.MathExpression;
-import nl.han.ica.icss.ast.expression.math.operation.*;
-import nl.han.ica.icss.ast.literal.BooleanLiteral;
-import nl.han.ica.icss.ast.literal.ColorLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PercentageLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PixelLiteral;
-import nl.han.ica.icss.ast.literal.numeric.ScalarLiteral;
+import nl.han.ica.icss.ast.expression.MathExpression;
+import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
+import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
+import nl.han.ica.icss.ast.expression.math.unary.UnaryMinus;
+import nl.han.ica.icss.ast.expression.math.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
 import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
-import nl.han.ica.icss.ast.variable.VariableAssignment;
-import nl.han.ica.icss.ast.variable.VariableIdentifier;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
@@ -26,19 +28,21 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
-      stylesheet.addChild(visit(variableAssignmentContext));
+      VariableAssignment variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
+      stylesheet.addVariableAssignment(variableAssignment);
     }
     for (var rulesetContext : context.ruleset()) {
-      stylesheet.addChild(visit(rulesetContext));
+      Ruleset ruleset = (Ruleset)visit(rulesetContext);
+      stylesheet.addRuleset(ruleset);
     }
     return stylesheet;
   }
 
   @Override
   public AstNode visitVariableAssignment(IcssParser.VariableAssignmentContext context) {
-    var variableIdentifier = (VariableIdentifier)visit(context.variableIdentifier());
+    var identifier = (VariableIdentifier)visit(context.variableIdentifier());
     var expression = (Expression)visit(context.expression());
-    return new VariableAssignment().addChild(variableIdentifier).addChild(expression);
+    return new VariableAssignment(identifier, expression);
   }
 
   @Override
@@ -53,21 +57,22 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
       return visit(context.booleanLiteral());
     } else if (context.colorLiteral() != null) {
       return visit(context.colorLiteral());
-    } else {
-      return visit(context.mathExpression());
     }
+    return visit(context.mathExpression());
   }
 
   @Override
   public AstNode visitBooleanLiteral(IcssParser.BooleanLiteralContext context) {
-    String stringValue = context.getText();
-    return new BooleanLiteral(stringValue);
+    String valueString = context.getText();
+    boolean value = Boolean.parseBoolean(valueString);
+    return new BooleanLiteral(value);
   }
 
   @Override
   public AstNode visitColorLiteral(IcssParser.ColorLiteralContext context) {
-    String stringValue = context.getText();
-    return new ColorLiteral(stringValue);
+    String valueString = context.getText();
+    String value = valueString.substring(1);
+    return new ColorLiteral(value);
   }
 
   @Override
@@ -84,7 +89,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
       left = switch (operator) {
         case "+" -> new BinaryAddition(left, right);
         case "-" -> new BinarySubtraction(left, right);
-        default -> throw new RuntimeException("Unexpected operator: " + operator);
+        default -> throw new RuntimeException("Unexpected operator '%s': expected + or -".formatted(operator));
       };
     }
     return left;
@@ -97,7 +102,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
       MathExpression right = (MathExpression)visit(context.unaryExpression(i));
       String operator = context.getChild(2 * i - 1).getText();
       if (!operator.equals("*")) {
-        throw new RuntimeException("Unexpected operator: " + operator);
+        throw new RuntimeException("Unexpected operator '%s': expected *".formatted(operator));
       }
       left = new BinaryMultiplication(left, right);
     }
@@ -114,7 +119,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
     return switch (operator) {
       case "+" -> new UnaryPlus(operand);
       case "-" -> new UnaryMinus(operand);
-      default -> throw new RuntimeException("Unexpected operator: " + operator);
+      default -> throw new RuntimeException("Unexpected operator '%s': expected + or -".formatted(operator));
     };
   }
 
@@ -122,32 +127,43 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitPrimaryExpression(IcssParser.PrimaryExpressionContext context) {
     if (context.numericLiteral() != null) {
       return visit(context.numericLiteral());
-    } else {
-      return visit(context.variableIdentifier());
     }
+    return visit(context.variableIdentifier());
+
   }
 
   @Override
-  public AstNode visitNumericLiteral(IcssParser.NumericLiteralContext context) {
-    if (context.scalarLiteral() != null) {
-      return new ScalarLiteral(context.getText());
-    } else if (context.pixelLiteral() != null) {
-      return new PixelLiteral(context.getText());
-    } else if (context.percentageLiteral() != null) {
-      return new PercentageLiteral(context.getText());
-    }
-    throw new RuntimeException("Invalid numeric literal");
+  public AstNode visitScalarLiteral(IcssParser.ScalarLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString);
+    return new ScalarLiteral(value);
+  }
+
+  @Override
+  public AstNode visitPixelLiteral(IcssParser.PixelLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString.substring(0, valueString.length() - 2));
+    return new PixelLiteral(value);
+  }
+
+  @Override
+  public AstNode visitPercentageLiteral(IcssParser.PercentageLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString.substring(0, valueString.length() - 1));
+    return new PercentageLiteral(value);
   }
 
   @Override
   public AstNode visitRuleset(IcssParser.RulesetContext context) {
-    var ruleset = new Ruleset();
-    ruleset.addChild(visit(context.selector()));
+    var selector = (Selector)visit(context.selector());
+    var ruleset = new Ruleset(selector);
     for (var variableAssignmentContext : context.variableAssignment()) {
-      ruleset.addChild(visit(variableAssignmentContext));
+      VariableAssignment variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
+      ruleset.addVariableAssignment(variableAssignment);
     }
     for (var declarationContext : context.declaration()) {
-      ruleset.addChild(visit(declarationContext));
+      Declaration declaration = (Declaration)visit(declarationContext);
+      ruleset.addDeclaration(declaration);
     }
     return ruleset;
   }
@@ -158,9 +174,8 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
       return visit(context.elementSelector());
     } else if (context.idSelector() != null) {
       return visit(context.idSelector());
-    } else {
-      return visit(context.classSelector());
     }
+    return visit(context.classSelector());
   }
 
   @Override
@@ -171,13 +186,15 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
 
   @Override
   public AstNode visitIdSelector(IcssParser.IdSelectorContext context) {
-    String identifier = context.getText();
+    String identifierString = context.getText();
+    String identifier = identifierString.substring(1);
     return new IdSelector(identifier);
   }
 
   @Override
   public AstNode visitClassSelector(IcssParser.ClassSelectorContext context) {
-    String identifier = context.getText();
+    String identifierString = context.getText();
+    String identifier = identifierString.substring(1);
     return new ClassSelector(identifier);
   }
 
@@ -185,7 +202,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitDeclaration(IcssParser.DeclarationContext context) {
     var property = (Property)visit(context.property());
     var expression = (Expression)visit(context.expression());
-    return new Declaration().addChild(property).addChild(expression);
+    return new Declaration(property, expression);
   }
 
   @Override
