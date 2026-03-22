@@ -2,23 +2,19 @@ package nl.han.ica.icss.transformer;
 
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.Expression;
+import nl.han.ica.icss.ast.Expression.Type;
+import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
+import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
 import nl.han.ica.icss.ast.expression.math.BinaryExpression;
 import nl.han.ica.icss.ast.expression.math.UnaryExpression;
-import nl.han.ica.icss.ast.expression.math.operation.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.math.operation.UnaryMinus;
-import nl.han.ica.icss.ast.expression.math.operation.UnaryPlus;
-import nl.han.ica.icss.ast.literal.BooleanLiteral;
-import nl.han.ica.icss.ast.literal.ColorLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PercentageLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PixelLiteral;
-import nl.han.ica.icss.ast.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.variable.VariableAssignment;
-import nl.han.ica.icss.ast.variable.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.math.Value;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
 
 import java.util.*;
-
-import static nl.han.ica.icss.ast.expression.Expression.Type;
 
 @NoArgsConstructor
 public class Evaluator implements Transformer {
@@ -30,31 +26,17 @@ public class Evaluator implements Transformer {
   }
 
   private Value<?> visit(AstNode node) {
-    if (node instanceof Stylesheet stylesheet) {
-      return visitStylesheet(stylesheet);
-    }
-    if (node instanceof VariableAssignment variableAssignment) {
-      return visitVariableAssignment(variableAssignment);
-    }
-    if (node instanceof BinaryExpression binaryExpression) {
-      return visitBinary(binaryExpression);
-    }
-    if (node instanceof UnaryExpression unaryExpression) {
-      return visitUnary(unaryExpression);
-    }
-    if (node instanceof VariableIdentifier variableIdentifier) {
-      return visitVariableIdentifier(variableIdentifier);
-    }
-    if (node instanceof Expression expression) {
-      return visitExpression(expression);
-    }
-    if (node instanceof Ruleset ruleset) {
-      return visitRuleset(ruleset);
-    }
-    if (node instanceof Declaration declaration) {
-      return visitDeclaration(declaration);
-    }
-    return null;
+    return switch (node) {
+      case Stylesheet stylesheet -> visitStylesheet(stylesheet);
+      case VariableAssignment variableAssignment -> visitVariableAssignment(variableAssignment);
+      case VariableIdentifier variableIdentifier -> visitVariableIdentifier(variableIdentifier);
+      case BinaryExpression binaryExpression -> visitBinaryExpression(binaryExpression);
+      case UnaryExpression unaryExpression -> visitUnaryExpression(unaryExpression);
+      case Expression expression -> visitExpression(expression);
+      case Ruleset ruleset -> visitRuleset(ruleset);
+      case Declaration declaration -> visitDeclaration(declaration);
+      default -> null;
+    };
   }
 
   private Value<?> visitStylesheet(Stylesheet stylesheet) {
@@ -67,67 +49,43 @@ public class Evaluator implements Transformer {
   }
 
   private Value<?> visitVariableAssignment(VariableAssignment variableAssignment) {
-    var variableIdentifier = (VariableIdentifier)variableAssignment.getChildren().getFirst();
-    var expression = (Expression)variableAssignment.getChildren().get(1);
-    Value<?> value = visit(expression);
-    scopes.peek().put(variableIdentifier.getIdentifier(), value);
-    removeSelf(variableAssignment);
+    Value<?> value = visit(variableAssignment.getExpression());
+    declare(variableAssignment.getIdentifier(), value);
+    variableAssignment.remove();
     return null;
   }
 
   private Value<?> visitVariableIdentifier(VariableIdentifier variableIdentifier) {
     Value<?> value = resolve(variableIdentifier.getIdentifier());
-    Expression expression = toExpression(value);
-    replaceSelf(variableIdentifier, expression);
+    Expression replacement = toExpression(value);
+    variableIdentifier.replaceWith(replacement);
     return value;
   }
 
-  private Value<?> visitExpression(Expression expression) {
-    if (expression instanceof BooleanLiteral booleanLiteral) {
-      return new Value<>(Type.BOOLEAN, Boolean.parseBoolean(booleanLiteral.getStringValue()));
-    }
-    if (expression instanceof ColorLiteral colorLiteral) {
-      return new Value<>(Type.COLOR, colorLiteral.getStringValue());
-    }
-    if (expression instanceof PercentageLiteral percentageLiteral) {
-      String stringValue = percentageLiteral.getStringValue();
-      int value = Integer.parseInt(stringValue.substring(0, stringValue.length() - 1));
-      return new Value<>(Type.PERCENTAGE, value);
-    }
-    if (expression instanceof PixelLiteral pixelLiteral) {
-      String stringValue = pixelLiteral.getStringValue();
-      int value = Integer.parseInt(stringValue.substring(0, stringValue.length() - 2));
-      return new Value<>(Type.PIXEL, value);
-    }
-    if (expression instanceof ScalarLiteral scalarLiteral) {
-      return new Value<>(Type.SCALAR, Integer.parseInt(scalarLiteral.getStringValue()));
-    }
-    return visit((AstNode)expression);
-  }
-
-  private Value<?> visitBinary(BinaryExpression binaryExpression) {
+  private Value<?> visitBinaryExpression(BinaryExpression binaryExpression) {
     Value<?> left = visit(binaryExpression.getLeft());
     Value<?> right = visit(binaryExpression.getRight());
-    Value<?> result = computeBinary(binaryExpression, left, right);
-    Expression expression = toExpression(result);
-    replaceSelf(binaryExpression, expression);
+    Value<?> result = binaryExpression.evaluate(left, right);
+    binaryExpression.replaceWith(toExpression(result));
     return result;
   }
 
-  private Value<?> computeBinary(BinaryExpression binaryExpression, Value<?> left, Value<?> right) {
-    return new Value<>(left.type == Type.SCALAR ? right.type : left.type, binaryExpression.evaluate());
-  }
-
-  private Value<?> visitUnary(UnaryExpression unaryExpression) {
-    Value<?> value = visit(unaryExpression.getOperand());
-    Value<?> result = computeUnary(unaryExpression, value);
-    Expression expression = toExpression(result);
-    replaceSelf(unaryExpression, expression);
+  private Value<?> visitUnaryExpression(UnaryExpression unaryExpression) {
+    Value<?> operand = visit(unaryExpression.getOperand());
+    Value<?> result = unaryExpression.evaluate(operand);
+    unaryExpression.replaceWith(toExpression(result));
     return result;
   }
 
-  private Value<?> computeUnary(UnaryExpression unaryExpression, Value<?> operand) {
-    return new Value<>(operand.type, unaryExpression.evaluate());
+  private Value<?> visitExpression(Expression expression) {
+    return switch (expression) {
+      case BooleanLiteral booleanLiteral -> new Value<>(Type.BOOLEAN, booleanLiteral.getValue());
+      case ColorLiteral colorLiteral -> new Value<>(Type.COLOR, colorLiteral.getValue());
+      case PercentageLiteral percentageLiteral -> new Value<>(Type.PERCENTAGE, percentageLiteral.getValue());
+      case PixelLiteral pixelLiteral -> new Value<>(Type.PIXEL, pixelLiteral.getValue());
+      case ScalarLiteral scalarLiteral -> new Value<>(Type.SCALAR, scalarLiteral.getValue());
+      default -> visit((AstNode)expression);
+    };
   }
 
   private Value<?> visitRuleset(Ruleset ruleset) {
@@ -140,34 +98,21 @@ public class Evaluator implements Transformer {
   }
 
   private Value<?> visitDeclaration(Declaration declaration) {
-    var expression = (Expression)declaration.getChildren().get(1);
+    Expression expression = declaration.getExpression();
     Value<?> value = visit(expression);
-    replaceChild(declaration, expression, toExpression(value));
+    declaration.setExpression(toExpression(value));
     return null;
   }
 
   private Expression toExpression(Value<?> value) {
-    return switch (value.type) {
-      case BOOLEAN -> new BooleanLiteral(value.value.toString());
-      case COLOR -> new ColorLiteral((String)value.value);
-      case PERCENTAGE -> new PercentageLiteral(value.value + "%");
-      case PIXEL -> new PixelLiteral(value.value + "px");
-      case SCALAR -> new ScalarLiteral(value.value.toString());
+    return switch (value.type()) {
+      case BOOLEAN -> new BooleanLiteral((boolean) value.value());
+      case COLOR -> new ColorLiteral((String) value.value());
+      case PERCENTAGE -> new PercentageLiteral((int) value.value());
+      case PIXEL -> new PixelLiteral((int) value.value());
+      case SCALAR -> new ScalarLiteral((int) value.value());
       default -> throw new RuntimeException();
     };
-  }
-
-  private void removeSelf(AstNode node) {
-    node.getParent().removeChild(node);
-  }
-
-  private void replaceSelf(AstNode self, AstNode with) {
-    replaceChild(self, self, with);
-  }
-
-  public void replaceChild(AstNode parent, AstNode oldChild, AstNode newChild) {
-    parent.removeChild(oldChild);
-    parent.addChild(newChild);
   }
 
   private void enterScope() {
@@ -178,14 +123,16 @@ public class Evaluator implements Transformer {
     scopes.pop();
   }
 
+  private void declare(String name, Value<?> value) {
+    Objects.requireNonNull(scopes.peek()).put(name, value);
+  }
+
   private Value<?> resolve(String identifier) {
     for (var scope : scopes) {
       if (scope.containsKey(identifier)) {
         return scope.get(identifier);
       }
     }
-    throw new RuntimeException("Cannot resolve variable '%s'".formatted(identifier));
+    throw new RuntimeException("Undefined variable '%s'".formatted(identifier));
   }
-
-  private record Value<T>(Type type, T value) {}
 }
