@@ -1,10 +1,11 @@
 package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @EqualsAndHashCode(callSuper = true)
 public class Property extends AstNode {
-  private final String identifier;
+  @Getter private final String identifier;
 
   public Property(String identifier) {
     this.identifier = identifier;

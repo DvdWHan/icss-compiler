@@ -2,14 +2,13 @@ package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.List;
 
 @EqualsAndHashCode
 public abstract class AstNode {
-  @Getter @Setter private SemanticError error = null;
+  @Getter private SemanticError error = null;
 
   public List<AstNode> getChildren() {
     return List.of();
@@ -25,6 +24,10 @@ public abstract class AstNode {
 
   public boolean hasError() {
     return error != null;
+  }
+
+  public void setError(String message) {
+    this.error = new SemanticError(message);
   }
 
   // FIXME: generates NPE
