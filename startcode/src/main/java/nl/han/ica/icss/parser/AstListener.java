@@ -3,20 +3,21 @@ package nl.han.ica.icss.parser;
 
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.Expression;
-import nl.han.ica.icss.ast.expression.math.MathExpression;
-import nl.han.ica.icss.ast.expression.math.operation.*;
-import nl.han.ica.icss.ast.literal.BooleanLiteral;
-import nl.han.ica.icss.ast.literal.ColorLiteral;
-import nl.han.ica.icss.ast.literal.numeric.NumericLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PercentageLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PixelLiteral;
-import nl.han.ica.icss.ast.literal.numeric.ScalarLiteral;
+import nl.han.ica.icss.ast.expression.MathExpression;
+import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
+import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
+import nl.han.ica.icss.ast.expression.math.unary.UnaryMinus;
+import nl.han.ica.icss.ast.expression.math.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
 import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
-import nl.han.ica.icss.ast.variable.VariableAssignment;
-import nl.han.ica.icss.ast.variable.VariableIdentifier;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -36,10 +37,12 @@ public class AstListener extends IcssBaseListener implements AstParser {
   public void exitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
-      stylesheet.addChild(nodes.get(variableAssignmentContext));
+      VariableAssignment variableAssignment = (VariableAssignment)nodes.get(variableAssignmentContext);
+      stylesheet.addVariableAssignment(variableAssignment);
     }
     for (var rulesetContext : context.ruleset()) {
-      stylesheet.addChild(nodes.get(rulesetContext));
+      Ruleset ruleset = (Ruleset)nodes.get(rulesetContext);
+      stylesheet.addRuleset(ruleset);
     }
     nodes.put(context, stylesheet);
   }
@@ -48,7 +51,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
   public void exitVariableAssignment(IcssParser.VariableAssignmentContext context) {
     var variableIdentifier = (VariableIdentifier)nodes.get(context.variableIdentifier());
     var expression = (Expression)nodes.get(context.expression());
-    var variableAssignment = new VariableAssignment().addChild(variableIdentifier).addChild(expression);
+    var variableAssignment = new VariableAssignment(variableIdentifier, expression);
     nodes.put(context, variableAssignment);
   }
 
@@ -72,16 +75,16 @@ public class AstListener extends IcssBaseListener implements AstParser {
 
   @Override
   public void exitBooleanLiteral(IcssParser.BooleanLiteralContext context) {
-    String stringValue = context.getText();
-    var booleanLiteral = new BooleanLiteral(stringValue);
-    nodes.put(context, booleanLiteral);
+    String valueString = context.getText();
+    boolean value = Boolean.parseBoolean(valueString);
+    nodes.put(context, new BooleanLiteral(value));
   }
 
   @Override
   public void exitColorLiteral(IcssParser.ColorLiteralContext context) {
-    String stringValue = context.getText();
-    var colorLiteral = new ColorLiteral(stringValue);
-    nodes.put(context, colorLiteral);
+    String valueString = context.getText();
+    String value = valueString.substring(1);
+    nodes.put(context, new ColorLiteral(value));
   }
 
   @Override
@@ -98,7 +101,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
       left = switch (operator) {
         case "+" -> new BinaryAddition(left, right);
         case "-" -> new BinarySubtraction(left, right);
-        default -> throw new RuntimeException("Unexpected operator: %s".formatted(operator));
+        default -> throw new RuntimeException("Unexpected operator '%s': expected + or -".formatted(operator));
       };
     }
     nodes.put(context, left);
@@ -111,7 +114,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
       var right = (MathExpression)nodes.get(context.unaryExpression(i));
       var operator = context.getChild(2 * i - 1).getText();
       if (!operator.equals("*")) {
-        throw new RuntimeException("Unexpected operator: %s".formatted(operator));
+        throw new RuntimeException("Unexpected operator '%s': expected *".formatted(operator));
       }
       left = new BinaryMultiplication(left, right);
     }
@@ -130,7 +133,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
     operand = switch (operator) {
       case "+" -> new UnaryPlus(operand);
       case "-" -> new UnaryMinus(operand);
-      default -> throw new RuntimeException("Unexpected operator: %s".formatted(operator));
+      default -> throw new RuntimeException("Unexpected operator '%s': expected + or -".formatted(operator));
     };
     nodes.put(context, operand);
   }
@@ -138,37 +141,43 @@ public class AstListener extends IcssBaseListener implements AstParser {
   @Override
   public void exitPrimaryExpression(IcssParser.PrimaryExpressionContext context) {
     if (context.numericLiteral() != null) {
-      var numericLiteralContext = context.numericLiteral();
-      NumericLiteral numericLiteral;
-      var stringValue = "";
-      if (numericLiteralContext.scalarLiteral() != null) {
-        stringValue = numericLiteralContext.scalarLiteral().getText();
-        numericLiteral = new ScalarLiteral(stringValue);
-      } else if (numericLiteralContext.percentageLiteral() != null) {
-        stringValue = numericLiteralContext.percentageLiteral().getText();
-        numericLiteral = new PercentageLiteral(stringValue);
-      } else if (numericLiteralContext.pixelLiteral() != null) {
-        stringValue = numericLiteralContext.pixelLiteral().getText();
-        numericLiteral = new PixelLiteral(stringValue);
-      } else {
-        throw new RuntimeException("Unexpected numeric literal: %s".formatted(context.getText()));
-      }
-      nodes.put(context, numericLiteral);
-    } else if (context.variableIdentifier() != null) {
-      var variableIdentifier = (VariableIdentifier)nodes.get(context.variableIdentifier());
-      nodes.put(context, variableIdentifier);
+      nodes.put(context, nodes.get(context.numericLiteral()));
     }
+    nodes.put(context, nodes.get(context.variableIdentifier()));
+  }
+
+  @Override
+  public void exitScalarLiteral(IcssParser.ScalarLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString);
+    nodes.put(context, new ScalarLiteral(value));
+  }
+
+  @Override
+  public void exitPixelLiteral(IcssParser.PixelLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString.substring(0, valueString.length() - 2));
+    nodes.put(context, new PixelLiteral(value));
+  }
+
+  @Override
+  public void exitPercentageLiteral(IcssParser.PercentageLiteralContext context) {
+    String valueString = context.getText();
+    int value = Integer.parseInt(valueString.substring(0, valueString.length() - 1));
+    nodes.put(context, new PercentageLiteral(value));
   }
 
   @Override
   public void exitRuleset(IcssParser.RulesetContext context) {
-    var ruleset = new Ruleset();
-    ruleset.addChild(nodes.get(context.selector()));
+    var selector = (Selector)nodes.get(context.selector());
+    var ruleset = new Ruleset(selector);
     for (var variableAssignmentContext : context.variableAssignment()) {
-      ruleset.addChild(nodes.get(variableAssignmentContext));
+      var variableAssignment = (VariableAssignment)nodes.get(variableAssignmentContext);
+      ruleset.addVariableAssignment(variableAssignment);
     }
     for (var declarationContext : context.declaration()) {
-      ruleset.addChild(nodes.get(declarationContext));
+      var declaration = (Declaration)nodes.get(declarationContext);
+      ruleset.addDeclaration(declaration);
     }
     nodes.put(context, ruleset);
   }
@@ -179,9 +188,8 @@ public class AstListener extends IcssBaseListener implements AstParser {
       nodes.put(context, nodes.get(context.elementSelector()));
     } else if (context.idSelector() != null) {
       nodes.put(context, nodes.get(context.idSelector()));
-    } else if (context.classSelector() != null) {
-      nodes.put(context, nodes.get(context.classSelector()));
     }
+    nodes.put(context, nodes.get(context.classSelector()));
   }
 
   @Override
@@ -209,7 +217,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
   public void exitDeclaration(IcssParser.DeclarationContext context) {
     var property = (Property)nodes.get(context.property());
     var expression = (Expression)nodes.get(context.expression());
-    var declaration = new Declaration().addChild(property).addChild(expression);
+    var declaration = new Declaration(property, expression);
     nodes.put(context, declaration);
   }
 
