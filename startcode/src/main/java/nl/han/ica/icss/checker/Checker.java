@@ -2,21 +2,21 @@ package nl.han.ica.icss.checker;
 
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.Expression;
+import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
+import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
+import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
 import nl.han.ica.icss.ast.expression.math.BinaryExpression;
 import nl.han.ica.icss.ast.expression.math.UnaryExpression;
-import nl.han.ica.icss.ast.expression.math.operation.*;
-import nl.han.ica.icss.ast.literal.BooleanLiteral;
-import nl.han.ica.icss.ast.literal.ColorLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PercentageLiteral;
-import nl.han.ica.icss.ast.literal.numeric.PixelLiteral;
-import nl.han.ica.icss.ast.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.variable.VariableAssignment;
-import nl.han.ica.icss.ast.variable.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
 
 import java.util.*;
 
-import static nl.han.ica.icss.ast.expression.Expression.Type;
+import static nl.han.ica.icss.ast.Expression.Type;
 
 @NoArgsConstructor
 public class Checker {
@@ -27,183 +27,123 @@ public class Checker {
   }
 
   private Type visit(AstNode node) {
-    if (node instanceof Stylesheet stylesheet) {
-      return visitStylesheet(stylesheet);
-    }
-    if (node instanceof VariableAssignment variableAssignment) {
-      return visitVariableAssignment(variableAssignment);
-    }
-    if (node instanceof VariableIdentifier variableIdentifier) {
-      return visitVariableIdentifier(variableIdentifier);
-    }
-    if (node instanceof BinaryAddition binaryAddition) {
-      return visitBinary(binaryAddition);
-    }
-    if (node instanceof BinarySubtraction binarySubtraction) {
-      return visitBinary(binarySubtraction);
-    }
-    if (node instanceof BinaryMultiplication binaryMultiplication) {
-      return visitBinary(binaryMultiplication);
-    }
-    if (node instanceof UnaryPlus unaryPlus) {
-      return visitUnary(unaryPlus);
-    }
-    if (node instanceof UnaryMinus unaryMinus) {
-      return visitUnary(unaryMinus);
-    }
-    if (node instanceof Expression expression) {
-      return visitExpression(expression);
-    }
-    if (node instanceof Ruleset ruleset) {
-      return visitRuleset(ruleset);
-    }
-    if (node instanceof Declaration declaration) {
-      return visitDeclaration(declaration);
-    }
-    for (AstNode child : node.getChildren()) {
-      visit(child);
-    }
-    return Type.UNDEFINED;
+    return switch (node) {
+      case Stylesheet stylesheet -> visitStylesheet(stylesheet);
+      case VariableAssignment variableAssignment -> visitVariableAssignment(variableAssignment);
+      case VariableIdentifier variableIdentifier -> visitVariableIdentifier(variableIdentifier);
+      case BinaryExpression binaryExpression -> visitBinaryExpression(binaryExpression);
+      case UnaryExpression unaryExpression -> visitUnaryExpression(unaryExpression);
+      case Expression expression -> visitExpression(expression);
+      case Ruleset ruleset -> visitRuleset(ruleset);
+      case Declaration declaration -> visitDeclaration(declaration);
+      default -> Type.UNDEFINED;
+    };
   }
 
   private Type visitStylesheet(Stylesheet stylesheet) {
     enterScope();
-    for (AstNode child : stylesheet.getChildren()) {
-      visit(child);
+    for (VariableAssignment variableAssignment : stylesheet.getVariableAssignments()) {
+      visit(variableAssignment);
+    }
+    for (Ruleset ruleset : stylesheet.getRulesets()) {
+      visit(ruleset);
     }
     exitScope();
     return Type.UNDEFINED;
   }
 
   private Type visitVariableAssignment(VariableAssignment variableAssignment) {
-    var variableIdentifier = (VariableIdentifier)variableAssignment.getChildren().getFirst();
-    var expression = (Expression)variableAssignment.getChildren().get(1);
-    Type type = visit(expression);
-    declare(variableIdentifier.getIdentifier(), type);
+    Type type = visit(variableAssignment.getExpression());
+    declare(variableAssignment.getIdentifier(), type);
     return Type.UNDEFINED;
   }
 
   private Type visitVariableIdentifier(VariableIdentifier variableIdentifier) {
     String identifier = variableIdentifier.getIdentifier();
     Type type = resolve(identifier);
-    ;
     if (type == Type.UNDEFINED) {
-      variableIdentifier.setError("Undefined variable '%s'".formatted(identifier));
+      attachError(variableIdentifier, "Undefined variable", identifier, "a definition");
     }
     return type;
   }
 
-  private Type visitBinary(BinaryExpression binaryExpression) {
+  private Type visitBinaryExpression(BinaryExpression binaryExpression) {
     Type left = visit(binaryExpression.getLeft());
     Type right = visit(binaryExpression.getRight());
     if (left == Type.COLOR || right == Type.COLOR) {
-      binaryExpression.setError("Cannot use COLOR in %s operation".formatted(binaryOperator(binaryExpression)));
+      attachError(binaryExpression, "Incompatible types", "%s and %s".formatted(left, right), "SCALAR, PIXEL, or PERCENTAGE");
       return Type.UNDEFINED;
     }
     if (binaryExpression instanceof BinaryAddition || binaryExpression instanceof BinarySubtraction) {
       if (left != right) {
-        binaryExpression.setError("Cannot %s %s and %s".formatted(binaryOperator(binaryExpression), left, right));
+        attachError(binaryExpression, "Incompatible types", "%s and %s".formatted(left, right), "both operands to be the same type"
+        );
         return Type.UNDEFINED;
       }
       return left;
     }
     if (binaryExpression instanceof BinaryMultiplication) {
       if (left != Type.SCALAR && right != Type.SCALAR) {
-        binaryExpression.setError("Cannot multiply %s and %s: one operand must be scalar".formatted(left, right));
+        attachError(binaryExpression, "Incompatible types", "%s and %s".formatted(left, right), "at least one SCALAR");
+        return Type.UNDEFINED;
       }
-      return (left == Type.SCALAR) ? right : left;
+      return left == Type.SCALAR ? right : left;
     }
     return Type.UNDEFINED;
   }
 
-  private String binaryOperator(BinaryExpression binaryExpression) {
-    return switch (binaryExpression) {
-      case BinaryAddition ignored -> "add";
-      case BinarySubtraction ignored -> "subtract";
-      case BinaryMultiplication ignored -> "multiply";
-      default -> "operate on";
-    };
-  }
-
-  private Type visitUnary(UnaryExpression unaryExpression) {
+  private Type visitUnaryExpression(UnaryExpression unaryExpression) {
     Type operand = visit(unaryExpression.getOperand());
     if (operand == Type.COLOR) {
-      unaryExpression.setError("Unary %s not allowed on %s".formatted(unaryOperator(unaryExpression), operand));
+      attachError(unaryExpression, "Incompatible type", operand.name(), "SCALAR, PIXEL, or PERCENTAGE");
       return Type.UNDEFINED;
     }
     return operand;
   }
 
-  private String unaryOperator(UnaryExpression unaryExpression) {
-    return unaryExpression instanceof UnaryMinus ? "minus" : "plus";
-  }
-
   private Type visitExpression(Expression expression) {
-    if (expression instanceof BooleanLiteral) {
-      return Type.BOOLEAN;
-    }
-    if (expression instanceof ColorLiteral) {
-      return Type.COLOR;
-    }
-    if (expression instanceof PercentageLiteral) {
-      return Type.PERCENTAGE;
-    }
-    if (expression instanceof PixelLiteral) {
-      return Type.PIXEL;
-    }
-    if (expression instanceof ScalarLiteral) {
-      return Type.SCALAR;
-    }
-    return visit((AstNode)expression);
+    return switch (expression) {
+      case BooleanLiteral ignored -> Type.BOOLEAN;
+      case ColorLiteral ignored -> Type.COLOR;
+      case PixelLiteral ignored -> Type.PIXEL;
+      case PercentageLiteral ignored -> Type.PERCENTAGE;
+      case ScalarLiteral ignored -> Type.SCALAR;
+      default -> visit(expression);
+    };
   }
 
   private Type visitRuleset(Ruleset ruleset) {
     enterScope();
-    for (AstNode child : ruleset.getChildren()) {
-      visit(child);
+    for (VariableAssignment variableAssignment : ruleset.getVariableAssignments()) {
+      visit(variableAssignment);
+    }
+    for (Declaration declaration : ruleset.getDeclarations()) {
+      visit(declaration);
     }
     exitScope();
     return Type.UNDEFINED;
   }
 
   private Type visitDeclaration(Declaration declaration) {
-    var property = (Property)declaration.getChildren().getFirst();
-    var expression = (Expression)declaration.getChildren().get(1);
-    Type type = visit(expression);
-    String identifier = property.getIdentifier();
-    switch (identifier) {
-      case "width":
-      case "height": {
-        if (type != Type.PERCENTAGE && type != Type.PIXEL) {
-          declaration.setError("Invalid value for '%s': expected %s, got %s".formatted(
-              identifier,
-              expectedType(identifier),
-              type
-          ));
+    Type type = visit(declaration.getExpression());
+    Property property = declaration.getProperty();
+    switch (property.getIdentifier()) {
+      case "width", "height" -> {
+        if (type != Type.PIXEL && type != Type.PERCENTAGE) {
+          attachError(declaration, "Incompatible type for width/height", type.name(), "PIXEL or PERCENTAGE");
         }
       }
-      break;
-      case "color":
-      case "background-color": {
+      case "color", "background-color" -> {
         if (type != Type.COLOR) {
-          declaration.setError("Invalid value for '%s': expected %s, got %s".formatted(
-              identifier,
-              expectedType(identifier),
-              type
-          ));
+          attachError(declaration, "Incompatible type for color/background-color", type.name(), "COLOR");
         }
       }
-      break;
     }
     return Type.UNDEFINED;
   }
 
-  private String expectedType(String property) {
-    return switch (property) {
-      case "width", "height" -> "PIXEL or PERCENTAGE";
-      case "color", "background-color" -> "COLOR";
-      default -> "unknown";
-    };
+  private void attachError(AstNode node, String wrong, String found, String expected) {
+    node.setError("%s: found %s, expected %s".formatted(wrong, found, expected));
   }
 
   private void enterScope() {
@@ -219,7 +159,7 @@ public class Checker {
   }
 
   private Type resolve(String name) {
-    for (Map<String, Type> scope : scopes) {
+    for (var scope : scopes) {
       if (scope.containsKey(name)) {
         return scope.get(name);
       }
