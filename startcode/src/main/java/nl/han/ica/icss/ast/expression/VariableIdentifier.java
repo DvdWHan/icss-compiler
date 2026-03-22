@@ -1,13 +1,19 @@
-package nl.han.ica.icss.ast;
+package nl.han.ica.icss.ast.expression;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import nl.han.ica.icss.ast.Expression;
 
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Property extends AstNode {
+public class VariableIdentifier extends Expression {
   @Getter private final String identifier;
+
+  @Override
+  public Type getType() {
+    return Type.UNDEFINED;
+  }
 
   @Override
   public String getNodeLabel() {

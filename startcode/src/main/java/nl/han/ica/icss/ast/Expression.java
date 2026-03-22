@@ -1,13 +1,10 @@
-package nl.han.ica.icss.ast.expression;
+package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
-import nl.han.ica.icss.ast.AstNode;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class Expression extends AstNode {
-  public String getStringValue() {
-    return "";
-  }
+  public abstract Type getType();
 
   public enum Type {
     BOOLEAN,
@@ -16,10 +13,5 @@ public abstract class Expression extends AstNode {
     PIXEL,
     SCALAR,
     UNDEFINED;
-
-    @Override
-    public String toString() {
-      return this.name();
-    }
   }
 }

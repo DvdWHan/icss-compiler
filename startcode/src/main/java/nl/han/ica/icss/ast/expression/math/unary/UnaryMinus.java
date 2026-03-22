@@ -1,8 +1,9 @@
-package nl.han.ica.icss.ast.expression.math.operation;
+package nl.han.ica.icss.ast.expression.math.unary;
 
 import lombok.EqualsAndHashCode;
-import nl.han.ica.icss.ast.expression.math.MathExpression;
+import nl.han.ica.icss.ast.expression.MathExpression;
 import nl.han.ica.icss.ast.expression.math.UnaryExpression;
+import nl.han.ica.icss.ast.expression.math.Value;
 
 @EqualsAndHashCode(callSuper = true)
 public class UnaryMinus extends UnaryExpression {
@@ -11,7 +12,7 @@ public class UnaryMinus extends UnaryExpression {
   }
 
   @Override
-  public int evaluate() {
-    return -getOperand().evaluate();
+  public Value<?> evaluate(Value<?> operand) {
+    return new Value<>(operand.type(), -asInt(operand));
   }
 }

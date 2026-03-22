@@ -1,8 +1,7 @@
-package nl.han.ica.icss.ast.selector;
+package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nl.han.ica.icss.ast.AstNode;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class Selector extends AstNode {
@@ -12,8 +11,10 @@ public abstract class Selector extends AstNode {
     this.identifier = identifier;
   }
 
+  public abstract String getIdentifierString();
+
   @Override
   public String getNodeLabel() {
-    return "%s(%s)".formatted(getClass().getSimpleName(), getIdentifier());
+    return "%s(%s)".formatted(getClass().getSimpleName(), getIdentifierString());
   }
 }

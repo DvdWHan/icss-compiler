@@ -1,38 +1,23 @@
 package nl.han.ica.icss.ast;
 
 import lombok.EqualsAndHashCode;
-import nl.han.ica.icss.ast.expression.Expression;
-
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @EqualsAndHashCode(callSuper = true)
 public class Declaration extends AstNode {
-  private Property property = null;
-  private Expression expression = null;
+  @Getter private final Property property;
+  @Getter @Setter private Expression expression;
 
-  @Override
-  public List<AstNode> getChildren() {
-    return List.of(property, expression);
+  public Declaration(Property property, Expression expression) {
+    this.property = property;
+    this.expression = expression;
+    addChild(property);
+    addChild(expression);
   }
 
   @Override
-  @SuppressWarnings("PatternVariableHidesField")
-  public AstNode addChild(AstNode child) {
-    child.setParent(this);
-    if (child instanceof Property property) {
-      this.property = property;
-    } else if (child instanceof Expression expression) {
-      this.expression = expression;
-    }
-    return this;
-  }
-
-  @Override
-  public void removeChild(AstNode child) {
-    if (child instanceof Property) {
-      this.property = null;
-    } else if (child instanceof Expression) {
-      this.expression = null;
-    }
+  public String getNodeLabel() {
+    return "%s(%s:%s)".formatted(getClass().getSimpleName(), property.getNodeLabel(), expression.getNodeLabel());
   }
 }

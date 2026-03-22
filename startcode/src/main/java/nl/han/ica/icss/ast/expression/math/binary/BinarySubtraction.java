@@ -1,8 +1,9 @@
-package nl.han.ica.icss.ast.expression.math.operation;
+package nl.han.ica.icss.ast.expression.math.binary;
 
 import lombok.EqualsAndHashCode;
+import nl.han.ica.icss.ast.expression.MathExpression;
 import nl.han.ica.icss.ast.expression.math.BinaryExpression;
-import nl.han.ica.icss.ast.expression.math.MathExpression;
+import nl.han.ica.icss.ast.expression.math.Value;
 
 @EqualsAndHashCode(callSuper = true)
 public class BinarySubtraction extends BinaryExpression {
@@ -11,7 +12,7 @@ public class BinarySubtraction extends BinaryExpression {
   }
 
   @Override
-  public int evaluate() {
-    return getLeft().evaluate() - getRight().evaluate();
+  public Value<?> evaluate(Value<?> left, Value<?> right) {
+    return new Value<>(left.type(), asInt(left) - asInt(right));
   }
 }
