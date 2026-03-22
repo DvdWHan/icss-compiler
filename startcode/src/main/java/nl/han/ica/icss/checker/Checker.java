@@ -62,7 +62,7 @@ public class Checker {
     String identifier = variableIdentifier.getIdentifier();
     Type type = resolve(identifier);
     if (type == Type.UNDEFINED) {
-      attachError(variableIdentifier, "Undefined variable", identifier, "a definition");
+      variableIdentifier.setError("Undefined variable '%s'".formatted(identifier));
     }
     return type;
   }
@@ -154,8 +154,8 @@ public class Checker {
     scopes.pop();
   }
 
-  private void declare(String name, Type type) {
-    Objects.requireNonNull(scopes.peek()).put(name, type);
+  private void declare(String identifier, Type type) {
+    Objects.requireNonNull(scopes.peek()).put(identifier, type);
   }
 
   private Type resolve(String name) {
