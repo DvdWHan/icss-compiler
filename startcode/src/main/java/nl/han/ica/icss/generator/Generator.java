@@ -34,7 +34,7 @@ public class Generator {
   private StringBuilder visitRuleset(Ruleset ruleset, StringBuilder sb, int indentation) {
     indent(sb, indentation);
     Selector selector = ruleset.getSelector();
-    sb.append(visit(selector, sb, indentation)).append(" {\n");
+    visit(selector, sb, indentation).append(" {\n");
     for (Declaration declaration : ruleset.getDeclarations()) {
       visit(declaration, sb, indentation + 1).append("\n");
     }
