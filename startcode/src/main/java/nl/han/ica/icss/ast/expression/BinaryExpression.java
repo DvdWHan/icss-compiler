@@ -6,8 +6,8 @@ import nl.han.ica.icss.ast.Expression;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class BinaryExpression extends Expression {
-  @Getter private Expression left;
-  @Getter private Expression right;
+  @Getter private final Expression left;
+  @Getter private final Expression right;
 
   public BinaryExpression(Expression left, Expression right) {
     this.left = left;

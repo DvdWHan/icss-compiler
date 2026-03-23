@@ -83,7 +83,7 @@ public class Evaluator implements Transformer {
       case PercentageLiteral percentageLiteral -> new Value<>(Type.PERCENTAGE, percentageLiteral.getValue());
       case PixelLiteral pixelLiteral -> new Value<>(Type.PIXEL, pixelLiteral.getValue());
       case ScalarLiteral scalarLiteral -> new Value<>(Type.SCALAR, scalarLiteral.getValue());
-      default -> visit((AstNode)expression);
+      default -> visit(expression);
     };
   }
 
@@ -99,6 +99,7 @@ public class Evaluator implements Transformer {
   private Value<?> visitDeclaration(Declaration declaration) {
     Expression expression = declaration.getExpression();
     Value<?> value = visit(expression);
+    assert value != null;
     declaration.setExpression(toExpression(value));
     return null;
   }

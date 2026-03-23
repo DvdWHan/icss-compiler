@@ -6,7 +6,7 @@ import nl.han.ica.icss.ast.Expression;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class UnaryExpression extends Expression {
-  @Getter private Expression operand;
+  @Getter private final Expression operand;
 
   public UnaryExpression(Expression operand) {
     this.operand = operand;
