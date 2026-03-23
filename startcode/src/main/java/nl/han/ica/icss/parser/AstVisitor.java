@@ -1,18 +1,17 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.MathExpression;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
 import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
 import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
-import nl.han.ica.icss.ast.expression.math.unary.UnaryMinus;
-import nl.han.ica.icss.ast.expression.math.unary.UnaryPlus;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
+import nl.han.ica.icss.ast.expression.unary.UnaryMinus;
+import nl.han.ica.icss.ast.expression.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
 import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
@@ -82,9 +81,9 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
 
   @Override
   public AstNode visitAdditionExpression(IcssParser.AdditionExpressionContext context) {
-    var left = (MathExpression)visit(context.multiplicationExpression(0));
+    var left = (Expression)visit(context.multiplicationExpression(0));
     for (int i = 1; i < context.multiplicationExpression().size(); ++i) {
-      var right = (MathExpression)visit(context.multiplicationExpression(i));
+      var right = (Expression)visit(context.multiplicationExpression(i));
       String operator = context.getChild(2 * i - 1).getText();
       left = switch (operator) {
         case "+" -> new BinaryAddition(left, right);
@@ -97,9 +96,9 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
 
   @Override
   public AstNode visitMultiplicationExpression(IcssParser.MultiplicationExpressionContext context) {
-    var left = (MathExpression)visit(context.unaryExpression(0));
+    var left = (Expression)visit(context.unaryExpression(0));
     for (int i = 1; i < context.unaryExpression().size(); ++i) {
-      var right = (MathExpression)visit(context.unaryExpression(i));
+      var right = (Expression)visit(context.unaryExpression(i));
       String operator = context.getChild(2 * i - 1).getText();
       if (!operator.equals("*")) {
         throw new RuntimeException("Unexpected operator '%s': expected *".formatted(operator));
@@ -114,7 +113,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
     if (context.primaryExpression() != null) {
       return visit(context.primaryExpression());
     }
-    var operand = (MathExpression)visit(context.unaryExpression());
+    var operand = (Expression)visit(context.unaryExpression());
     String operator = context.getChild(0).getText();
     return switch (operator) {
       case "+" -> new UnaryPlus(operand);

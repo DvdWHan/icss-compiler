@@ -9,10 +9,9 @@ import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.math.BinaryExpression;
-import nl.han.ica.icss.ast.expression.math.UnaryExpression;
-import nl.han.ica.icss.ast.expression.math.Value;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.BinaryExpression;
+import nl.han.ica.icss.ast.expression.UnaryExpression;
+import nl.han.ica.icss.ast.expression.Value;
 
 import java.util.*;
 

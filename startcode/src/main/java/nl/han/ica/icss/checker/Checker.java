@@ -8,11 +8,11 @@ import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.math.BinaryExpression;
-import nl.han.ica.icss.ast.expression.math.UnaryExpression;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
+import nl.han.ica.icss.ast.expression.BinaryExpression;
+import nl.han.ica.icss.ast.expression.UnaryExpression;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 
 import java.util.*;
 

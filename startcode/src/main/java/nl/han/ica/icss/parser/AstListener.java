@@ -3,18 +3,17 @@ package nl.han.ica.icss.parser;
 
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.expression.MathExpression;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
 import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
 import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.math.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.math.binary.BinarySubtraction;
-import nl.han.ica.icss.ast.expression.math.unary.UnaryMinus;
-import nl.han.ica.icss.ast.expression.math.unary.UnaryPlus;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
+import nl.han.ica.icss.ast.expression.unary.UnaryMinus;
+import nl.han.ica.icss.ast.expression.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
 import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
@@ -94,9 +93,9 @@ public class AstListener extends IcssBaseListener implements AstParser {
 
   @Override
   public void exitAdditionExpression(IcssParser.AdditionExpressionContext context) {
-    var left = (MathExpression)nodes.get(context.multiplicationExpression(0));
+    var left = (Expression)nodes.get(context.multiplicationExpression(0));
     for (int i = 1; i < context.multiplicationExpression().size(); ++i) {
-      var right = (MathExpression)nodes.get(context.multiplicationExpression(i));
+      var right = (Expression)nodes.get(context.multiplicationExpression(i));
       var operator = context.getChild(2 * i - 1).getText();
       left = switch (operator) {
         case "+" -> new BinaryAddition(left, right);
@@ -109,9 +108,9 @@ public class AstListener extends IcssBaseListener implements AstParser {
 
   @Override
   public void exitMultiplicationExpression(IcssParser.MultiplicationExpressionContext context) {
-    var left = (MathExpression)nodes.get(context.unaryExpression(0));
+    var left = (Expression)nodes.get(context.unaryExpression(0));
     for (int i = 1; i < context.unaryExpression().size(); ++i) {
-      var right = (MathExpression)nodes.get(context.unaryExpression(i));
+      var right = (Expression)nodes.get(context.unaryExpression(i));
       var operator = context.getChild(2 * i - 1).getText();
       if (!operator.equals("*")) {
         throw new RuntimeException("Unexpected operator '%s': expected *".formatted(operator));
@@ -128,7 +127,7 @@ public class AstListener extends IcssBaseListener implements AstParser {
       nodes.put(context, nodes.get(primaryExpression));
       return;
     }
-    MathExpression operand = (MathExpression)nodes.get(context.unaryExpression());
+    Expression operand = (Expression)nodes.get(context.unaryExpression());
     String operator = context.getChild(0).getText();
     operand = switch (operator) {
       case "+" -> new UnaryPlus(operand);

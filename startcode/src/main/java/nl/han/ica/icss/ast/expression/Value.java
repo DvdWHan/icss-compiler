@@ -1,4 +1,4 @@
-package nl.han.ica.icss.ast.expression.math;
+package nl.han.ica.icss.ast.expression;
 
 import nl.han.ica.icss.ast.Expression;
 
