@@ -14,7 +14,7 @@ public class Generator {
   private StringBuilder visitStylesheet(Stylesheet stylesheet) {
     var sb = new StringBuilder();
     for (Ruleset ruleset : stylesheet.getRulesets()) {
-      visitRuleset(ruleset, sb).append("\n");
+      visitRuleset(ruleset, sb).append("\n\n");
     }
     return sb;
   }
@@ -32,6 +32,7 @@ public class Generator {
 
   private StringBuilder visitBody(Body body, StringBuilder sb) {
     for (Declaration declaration : body.getDeclarations()) {
+      indent(sb);
       visitDeclaration(declaration, sb).append("\n");
     }
     return sb;
@@ -51,5 +52,9 @@ public class Generator {
   private StringBuilder visitLiteral(Literal<?> literal, StringBuilder sb) {
     sb.append(literal.getValueString());
     return sb;
+  }
+
+  private void indent(StringBuilder sb) {
+    sb.append("  ");
   }
 }
