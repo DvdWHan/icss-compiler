@@ -11,15 +11,15 @@ import nl.han.ica.icss.ast.AstNode;
 
 public class AstPane extends BorderPane {
 
-    private TreeView<AstNode> content;
+    private TreeView<AstNode<?>> content;
     private Label title;
 
     public AstPane() {
 		super();
 
 		title = new Label("Internal (AST):");
-		content = new TreeView<AstNode>();
-        content.setCellFactory(treeview ->  new TreeCell<AstNode>() {
+		content = new TreeView<>();
+        content.setCellFactory(treeview ->  new TreeCell<>() {
             @Override
             public void updateItem(AstNode item, boolean empty) {
                 super.updateItem(item, empty);
@@ -50,12 +50,12 @@ public class AstPane extends BorderPane {
     public void update(Ast ast) {
         content.setRoot(astNodeToTreeItem(ast.getRoot()));
     }
-    private TreeItem<AstNode> astNodeToTreeItem(AstNode astNode) {
+    private TreeItem<AstNode<?>> astNodeToTreeItem(AstNode<?> astNode) {
 
-        TreeItem<AstNode> tvNode = new TreeItem<AstNode>(astNode);
+        TreeItem<AstNode<?>> tvNode = new TreeItem<>(astNode);
         tvNode.setExpanded(true);
 
-        for(AstNode child : astNode.getChildren()) {
+        for(AstNode<?> child : astNode.getChildren()) {
             tvNode.getChildren().add(astNodeToTreeItem(child));
         }
         return tvNode;

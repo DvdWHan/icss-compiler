@@ -17,14 +17,14 @@ import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
+public class AstVisitor extends IcssBaseVisitor<AstNode<?>> implements AstParser {
   public Ast buildAst(ParseTree parseTree) {
     var stylesheet = (Stylesheet)visit(parseTree);
     return new Ast(stylesheet);
   }
 
   @Override
-  public AstNode visitStylesheet(IcssParser.StylesheetContext context) {
+  public AstNode<?> visitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
       stylesheet.addChild(visit(variableAssignmentContext));
@@ -36,20 +36,20 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitVariableAssignment(IcssParser.VariableAssignmentContext context) {
+  public AstNode<?> visitVariableAssignment(IcssParser.VariableAssignmentContext context) {
     var identifier = (VariableIdentifier)visit(context.variableIdentifier());
     var expression = (Expression)visit(context.expression());
     return new VariableAssignment(identifier, expression);
   }
 
   @Override
-  public AstNode visitVariableIdentifier(IcssParser.VariableIdentifierContext context) {
+  public AstNode<?> visitVariableIdentifier(IcssParser.VariableIdentifierContext context) {
     String identifier = context.getText();
     return new VariableIdentifier(identifier);
   }
 
   @Override
-  public AstNode visitExpression(IcssParser.ExpressionContext context) {
+  public AstNode<?> visitExpression(IcssParser.ExpressionContext context) {
     if (context.booleanLiteral() != null) {
       return visit(context.booleanLiteral());
     } else if (context.colorLiteral() != null) {
@@ -59,26 +59,26 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitBooleanLiteral(IcssParser.BooleanLiteralContext context) {
+  public AstNode<?> visitBooleanLiteral(IcssParser.BooleanLiteralContext context) {
     String valueString = context.getText();
     boolean value = Boolean.parseBoolean(valueString);
     return new BooleanLiteral(value);
   }
 
   @Override
-  public AstNode visitColorLiteral(IcssParser.ColorLiteralContext context) {
+  public AstNode<?> visitColorLiteral(IcssParser.ColorLiteralContext context) {
     String valueString = context.getText();
     String value = valueString.substring(1);
     return new ColorLiteral(value);
   }
 
   @Override
-  public AstNode visitMathExpression(IcssParser.MathExpressionContext context) {
+  public AstNode<?> visitMathExpression(IcssParser.MathExpressionContext context) {
     return visit(context.additionExpression());
   }
 
   @Override
-  public AstNode visitAdditionExpression(IcssParser.AdditionExpressionContext context) {
+  public AstNode<?> visitAdditionExpression(IcssParser.AdditionExpressionContext context) {
     var left = (Expression)visit(context.multiplicationExpression(0));
     for (int i = 1; i < context.multiplicationExpression().size(); ++i) {
       var right = (Expression)visit(context.multiplicationExpression(i));
@@ -93,7 +93,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitMultiplicationExpression(IcssParser.MultiplicationExpressionContext context) {
+  public AstNode<?> visitMultiplicationExpression(IcssParser.MultiplicationExpressionContext context) {
     var left = (Expression)visit(context.unaryExpression(0));
     for (int i = 1; i < context.unaryExpression().size(); ++i) {
       var right = (Expression)visit(context.unaryExpression(i));
@@ -107,7 +107,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitUnaryExpression(IcssParser.UnaryExpressionContext context) {
+  public AstNode<?> visitUnaryExpression(IcssParser.UnaryExpressionContext context) {
     if (context.primaryExpression() != null) {
       return visit(context.primaryExpression());
     }
@@ -121,7 +121,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitPrimaryExpression(IcssParser.PrimaryExpressionContext context) {
+  public AstNode<?> visitPrimaryExpression(IcssParser.PrimaryExpressionContext context) {
     if (context.numericLiteral() != null) {
       return visit(context.numericLiteral());
     }
@@ -130,35 +130,35 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitScalarLiteral(IcssParser.ScalarLiteralContext context) {
+  public AstNode<?> visitScalarLiteral(IcssParser.ScalarLiteralContext context) {
     String valueString = context.getText();
     int value = Integer.parseInt(valueString);
     return new ScalarLiteral(value);
   }
 
   @Override
-  public AstNode visitPixelLiteral(IcssParser.PixelLiteralContext context) {
+  public AstNode<?> visitPixelLiteral(IcssParser.PixelLiteralContext context) {
     String valueString = context.getText();
     int value = Integer.parseInt(valueString.substring(0, valueString.length() - 2));
     return new PixelLiteral(value);
   }
 
   @Override
-  public AstNode visitPercentageLiteral(IcssParser.PercentageLiteralContext context) {
+  public AstNode<?> visitPercentageLiteral(IcssParser.PercentageLiteralContext context) {
     String valueString = context.getText();
     int value = Integer.parseInt(valueString.substring(0, valueString.length() - 1));
     return new PercentageLiteral(value);
   }
 
   @Override
-  public AstNode visitRuleset(IcssParser.RulesetContext context) {
+  public AstNode<?> visitRuleset(IcssParser.RulesetContext context) {
     var selector = (Selector)visit(context.selector());
     var body = (Body)visit(context.body());
     return new Ruleset(selector, body);
   }
 
   @Override
-  public AstNode visitSelector(IcssParser.SelectorContext context) {
+  public AstNode<?> visitSelector(IcssParser.SelectorContext context) {
     if (context.elementSelector() != null) {
       return visit(context.elementSelector());
     } else if (context.idSelector() != null) {
@@ -168,27 +168,27 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitElementSelector(IcssParser.ElementSelectorContext context) {
+  public AstNode<?> visitElementSelector(IcssParser.ElementSelectorContext context) {
     String identifier = context.getText();
     return new ElementSelector(identifier);
   }
 
   @Override
-  public AstNode visitIdSelector(IcssParser.IdSelectorContext context) {
+  public AstNode<?> visitIdSelector(IcssParser.IdSelectorContext context) {
     String identifierString = context.getText();
     String identifier = identifierString.substring(1);
     return new IdSelector(identifier);
   }
 
   @Override
-  public AstNode visitClassSelector(IcssParser.ClassSelectorContext context) {
+  public AstNode<?> visitClassSelector(IcssParser.ClassSelectorContext context) {
     String identifierString = context.getText();
     String identifier = identifierString.substring(1);
     return new ClassSelector(identifier);
   }
 
   @Override
-  public AstNode visitBody(IcssParser.BodyContext context) {
+  public AstNode<?> visitBody(IcssParser.BodyContext context) {
     var body = new Body();
     for (var variableAssignmentContext : context.variableAssignment()) {
       body.addChild(visit(variableAssignmentContext));
@@ -203,20 +203,20 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
-  public AstNode visitDeclaration(IcssParser.DeclarationContext context) {
+  public AstNode<?> visitDeclaration(IcssParser.DeclarationContext context) {
     var property = (Property)visit(context.property());
     var expression = (Expression)visit(context.expression());
     return new Declaration(property, expression);
   }
 
   @Override
-  public AstNode visitProperty(IcssParser.PropertyContext context) {
+  public AstNode<?> visitProperty(IcssParser.PropertyContext context) {
     String identifier = context.getText();
     return new Property(identifier);
   }
 
   @Override
-  public AstNode visitConditionalStatement(IcssParser.ConditionalStatementContext context) {
+  public AstNode<?> visitConditionalStatement(IcssParser.ConditionalStatementContext context) {
     var condition = (Expression)visit(context.expression());
     var ifBody = (Body)visit(context.body(0));
     var elseBody = context.body().size() > 1 ? (Body)visit(context.body(1)) : null;

@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode(callSuper = true)
-public class ConditionalStatement extends AstNode {
+public class ConditionalStatement extends AstNode<ConditionalStatement> {
   @Getter private final Expression condition;
   @Getter private final Body ifBody;
   @Getter private final Body elseBody;

@@ -26,7 +26,7 @@ public class Checker {
     visit(ast.getRoot());
   }
 
-  private Type visit(AstNode node) {
+  private Type visit(AstNode<?> node) {
     return switch (node) {
       case Stylesheet stylesheet -> visitStylesheet(stylesheet);
       case VariableAssignment variableAssignment -> visitVariableAssignment(variableAssignment);
@@ -167,7 +167,7 @@ public class Checker {
     return Type.UNDEFINED;
   }
 
-  private void attachError(AstNode node, String wrong, String found, String expected) {
+  private void attachError(AstNode<?> node, String wrong, String found, String expected) {
     node.setError("%s: found %s, expected %s".formatted(wrong, found, expected));
   }
 

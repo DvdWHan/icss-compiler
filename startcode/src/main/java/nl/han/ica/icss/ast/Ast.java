@@ -20,11 +20,11 @@ public class Ast {
     return errors;
   }
 
-  private void collectErrors(List<SemanticError> errors, AstNode node) {
+  private void collectErrors(List<SemanticError> errors, AstNode<?> node) {
     if (node.hasError()) {
       errors.add(node.getError());
     }
-    for (AstNode child : node.getChildren()) {
+    for (AstNode<?> child : node.getChildren()) {
       collectErrors(errors, child);
     }
   }

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Property extends AstNode {
+public class Property extends AstNode<Property> {
   @Getter private final String identifier;
 
   @Override

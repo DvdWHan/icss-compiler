@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @EqualsAndHashCode(callSuper = true)
-public class Declaration extends AstNode {
+public class Declaration extends AstNode<Declaration> {
   @Getter private final Property property;
   @Getter @Setter private Expression expression;
 

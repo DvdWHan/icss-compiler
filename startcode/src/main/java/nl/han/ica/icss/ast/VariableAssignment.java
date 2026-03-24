@@ -6,7 +6,7 @@ import lombok.Setter;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
 
 @EqualsAndHashCode(callSuper = true)
-public class VariableAssignment extends AstNode {
+public class VariableAssignment extends AstNode<VariableAssignment> {
   private final VariableIdentifier identifier;
   @Getter @Setter private Expression expression;
 

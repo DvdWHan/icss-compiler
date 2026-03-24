@@ -23,7 +23,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 @NoArgsConstructor
 public class AstListener extends IcssBaseListener implements AstParser {
-  private final ParseTreeProperty<AstNode> nodes = new ParseTreeProperty<>();
+  private final ParseTreeProperty<AstNode<?>> nodes = new ParseTreeProperty<>();
 
   public Ast buildAst(ParseTree parseTree) {
     ParseTreeWalker walker = new ParseTreeWalker();

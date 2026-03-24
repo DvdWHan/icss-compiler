@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode(callSuper = true)
-public class Ruleset extends AstNode {
+public class Ruleset extends AstNode<Ruleset> {
   @Getter private final Selector selector;
   @Getter private final Body body;
 

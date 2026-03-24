@@ -24,7 +24,7 @@ public class Evaluator implements Transformer {
     visit(ast.getRoot());
   }
 
-  private Optional<Value<?>> visit(AstNode node) {
+  private Optional<Value<?>> visit(AstNode<?> node) {
     return switch (node) {
       case Stylesheet stylesheet -> visitStylesheet(stylesheet);
       case VariableAssignment variableAssignment -> visitVariableAssignment(variableAssignment);
@@ -123,7 +123,7 @@ public class Evaluator implements Transformer {
     }
     scoped(() -> {
       int index = target.getChildren().size();
-      for (AstNode child : new ArrayList<>(source.getChildren())) {
+      for (AstNode<?> child : new ArrayList<>(source.getChildren())) {
         child.remove();
         target.addChild(index++, child);
         visit(child);
@@ -131,8 +131,8 @@ public class Evaluator implements Transformer {
     });
   }
 
-  private void visitChildren(AstNode node) {
-    for (AstNode child : new ArrayList<>(node.getChildren())) {
+  private void visitChildren(AstNode<?> node) {
+    for (AstNode<?> child : new ArrayList<>(node.getChildren())) {
       visit(child);
     }
   }

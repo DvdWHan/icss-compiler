@@ -7,7 +7,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Body extends AstNode {
+public class Body extends AstNode<Body> {
   public List<VariableAssignment> getVariableAssignments() {
     return getChildrenOfType(VariableAssignment.class);
   }

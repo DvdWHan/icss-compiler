@@ -7,7 +7,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Stylesheet extends AstNode {
+public class Stylesheet extends AstNode<Stylesheet> {
   public List<VariableAssignment> getVariableAssignments() {
     return getChildrenOfType(VariableAssignment.class);
   }

@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode(callSuper = true)
-public abstract class Selector extends AstNode {
+public abstract class Selector extends AstNode<Selector> {
   @Getter private final String identifier;
 
   public Selector(String identifier) {

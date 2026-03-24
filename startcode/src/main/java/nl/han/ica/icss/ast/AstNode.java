@@ -8,30 +8,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public abstract class AstNode {
-  @Getter private AstNode parent;
-  @EqualsAndHashCode.Include private final List<AstNode> children = new ArrayList<>();
+public abstract class AstNode<Self extends AstNode<Self>> {
+  @Getter private AstNode<?> parent;
+  @EqualsAndHashCode.Include private final List<AstNode<?>> children = new ArrayList<>();
   @Getter private SemanticError error;
 
-  public final List<AstNode> getChildren() {
+  public final List<AstNode<?>> getChildren() {
     return Collections.unmodifiableList(children);
   }
 
   @SuppressWarnings("unchecked")
-  protected <T extends AstNode> List<T> getChildrenOfType(Class<?> clazz) {
+  protected <T extends AstNode<?>> List<T> getChildrenOfType(Class<?> clazz) {
     return (List<T>)children.stream().filter(clazz::isInstance).map(clazz::cast).toList();
   }
 
-  public final AstNode addChild(AstNode child) {
+  @SuppressWarnings("unchecked")
+  public final Self addChild(AstNode<?> child) {
     if (child != null) {
       child.parent = this;
       children.add(child);
     }
-    return this;
+    return (Self)this;
   }
 
-  public final void addChild(int index, AstNode child) {
+  public final void addChild(int index, AstNode<?> child) {
     if (child != null) {
       child.parent = this;
       children.add(index, child);
@@ -45,18 +47,18 @@ public abstract class AstNode {
     parent.removeChild(this);
   }
 
-  private void removeChild(AstNode child) {
+  private void removeChild(AstNode<?> child) {
     children.remove(child);
   }
 
-  public final void replaceWith(AstNode node) {
+  public final void replaceWith(AstNode<?> node) {
     if (parent == null) {
       throw new IllegalStateException("Cannot replace %s with %s without a parent".formatted(this, node));
     }
     parent.replaceChild(this, node);
   }
 
-  private void replaceChild(AstNode oldChild, AstNode newChild) {
+  private void replaceChild(AstNode<?> oldChild, AstNode<?> newChild) {
     if (newChild == null) {
       throw new IllegalStateException("Cannot replace %s with null".formatted(oldChild));
     }
@@ -86,15 +88,15 @@ public abstract class AstNode {
     return sb.toString();
   }
 
-  private static void toString(AstNode node, StringBuilder sb, int indentation) {
+  private static void toString(AstNode<?> node, StringBuilder sb, int indentation) {
     indent(sb, indentation).append(node.getNodeLabel());
     if (node.getChildren().isEmpty()) {
       return;
     }
     sb.append("[\n");
-    List<AstNode> children = node.getChildren();
+    List<AstNode<?>> children = node.getChildren();
     for (int i = 0; i < children.size(); ++i) {
-      AstNode child = children.get(i);
+      AstNode<?> child = children.get(i);
       toString(child, sb, indentation + 1);
       if (i < children.size() - 1) {
         sb.append(",");
