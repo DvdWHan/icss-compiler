@@ -2,17 +2,17 @@ package nl.han.ica.icss.checker;
 
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.expression.BinaryExpression;
+import nl.han.ica.icss.ast.expression.UnaryExpression;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
 import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.BinaryExpression;
-import nl.han.ica.icss.ast.expression.UnaryExpression;
-import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 
 import java.util.*;
 
@@ -35,7 +35,9 @@ public class Checker {
       case UnaryExpression unaryExpression -> visitUnaryExpression(unaryExpression);
       case Expression expression -> visitExpression(expression);
       case Ruleset ruleset -> visitRuleset(ruleset);
+//      case Body body -> visitBody(body);
       case Declaration declaration -> visitDeclaration(declaration);
+      case ConditionalStatement conditionalStatement -> visitConditionalStatement(conditionalStatement);
       default -> Type.UNDEFINED;
     };
   }
@@ -71,12 +73,21 @@ public class Checker {
     Type left = visit(binaryExpression.getLeft());
     Type right = visit(binaryExpression.getRight());
     if (left == Type.COLOR || right == Type.COLOR) {
-      attachError(binaryExpression, "Incompatible types", "%s and %s".formatted(left, right), "SCALAR, PIXEL, or PERCENTAGE");
+      attachError(
+          binaryExpression,
+          "Incompatible types",
+          "%s and %s".formatted(left, right),
+          "SCALAR, PIXEL, or PERCENTAGE"
+      );
       return Type.UNDEFINED;
     }
     if (binaryExpression instanceof BinaryAddition || binaryExpression instanceof BinarySubtraction) {
       if (left != right) {
-        attachError(binaryExpression, "Incompatible types", "%s and %s".formatted(left, right), "both operands to be the same type"
+        attachError(
+            binaryExpression,
+            "Incompatible types",
+            "%s and %s".formatted(left, right),
+            "both operands to be the same type"
         );
         return Type.UNDEFINED;
       }
@@ -114,15 +125,13 @@ public class Checker {
 
   private Type visitRuleset(Ruleset ruleset) {
     enterScope();
-    for (VariableAssignment variableAssignment : ruleset.getVariableAssignments()) {
-      visit(variableAssignment);
-    }
-    for (Declaration declaration : ruleset.getDeclarations()) {
-      visit(declaration);
-    }
+    visit(ruleset.getBody());
     exitScope();
     return Type.UNDEFINED;
   }
+
+//  private Type visitBody(Body body) {
+//  }
 
   private Type visitDeclaration(Declaration declaration) {
     Type type = visit(declaration.getExpression());
@@ -138,6 +147,22 @@ public class Checker {
           attachError(declaration, "Incompatible type for color/background-color", type.name(), "COLOR");
         }
       }
+    }
+    return Type.UNDEFINED;
+  }
+
+  private Type visitConditionalStatement(ConditionalStatement conditionalStatement) {
+    Type type = visit(conditionalStatement.getCondition());
+    if (type != Type.BOOLEAN) {
+      conditionalStatement.setError("Condition must be boolean, got " + type);
+    }
+    enterScope();
+    visit(conditionalStatement.getIfBody());
+    exitScope();
+    if (conditionalStatement.getElseBody() != null) {
+      enterScope();
+      visit(conditionalStatement.getElseBody());
+      exitScope();
     }
     return Type.UNDEFINED;
   }

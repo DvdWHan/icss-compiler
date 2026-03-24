@@ -8,65 +8,48 @@ import nl.han.ica.icss.ast.expression.Literal;
 @NoArgsConstructor
 public class Generator {
   public String generate(Ast ast) {
-    return visit(ast.getRoot(), new StringBuilder(), 0).toString();
+    return visitStylesheet(ast.getRoot()).toString();
   }
 
-  private StringBuilder visit(AstNode node, StringBuilder sb, int indentation) {
-    return switch (node) {
-      case Stylesheet stylesheet -> visitStylesheet(stylesheet, sb, indentation);
-      case Ruleset ruleset -> visitRuleset(ruleset, sb, indentation);
-      case Selector selector -> visitSelector(selector, sb, indentation);
-      case Declaration declaration -> visitDeclaration(declaration, sb, indentation);
-      case Property property -> visitProperty(property, sb);
-      case Literal<?> literal -> visitLiteral(literal, sb);
-      default -> throw new IllegalStateException("Unexpected node '%s'".formatted(node.getNodeLabel()));
-    };
-  }
-
-  private StringBuilder visitStylesheet(Stylesheet stylesheet, StringBuilder sb, int indentation) {
-    indent(sb, indentation);
+  private StringBuilder visitStylesheet(Stylesheet stylesheet) {
+    var sb = new StringBuilder();
     for (Ruleset ruleset : stylesheet.getRulesets()) {
-      visit(ruleset, sb, indentation);
+      visitRuleset(ruleset, sb).append("\n");
     }
     return sb;
   }
 
-  private StringBuilder visitRuleset(Ruleset ruleset, StringBuilder sb, int indentation) {
-    indent(sb, indentation);
-    Selector selector = ruleset.getSelector();
-    visit(selector, sb, indentation).append(" {\n");
-    for (Declaration declaration : ruleset.getDeclarations()) {
-      visit(declaration, sb, indentation + 1).append("\n");
+  private StringBuilder visitRuleset(Ruleset ruleset, StringBuilder sb) {
+    visitSelector(ruleset.getSelector(), sb).append(" {\n");
+    visitBody(ruleset.getBody(), sb).append("}");
+    return sb;
+  }
+
+  private StringBuilder visitSelector(Selector selector, StringBuilder sb) {
+    sb.append(selector.getIdentifierString());
+    return sb;
+  }
+
+  private StringBuilder visitBody(Body body, StringBuilder sb) {
+    for (Declaration declaration : body.getDeclarations()) {
+      visitDeclaration(declaration, sb).append("\n");
     }
-    return sb.append("}");
+    return sb;
   }
 
-  private StringBuilder visitSelector(Selector selector, StringBuilder sb, int indentation) {
-    indent(sb, indentation);
-    String identifierString = selector.getIdentifierString();
-    return sb.append(identifierString);
-  }
-
-  private StringBuilder visitDeclaration(Declaration declaration, StringBuilder sb, int indentation) {
-    indent(sb, indentation);
-    Property property = declaration.getProperty();
-    visit(property, sb, indentation).append(": ");
-    Literal<?> literal = (Literal<?>)declaration.getExpression();
-    visit(literal, sb, indentation).append(";");
+  private StringBuilder visitDeclaration(Declaration declaration, StringBuilder sb) {
+    visitProperty(declaration.getProperty(), sb).append(": ");
+    visitLiteral((Literal<?>)declaration.getExpression(), sb).append(";");
     return sb;
   }
 
   private StringBuilder visitProperty(Property property, StringBuilder sb) {
-    String identifier = property.getIdentifier();
-    return sb.append(identifier);
+    sb.append(property.getIdentifier());
+    return sb;
   }
 
   private StringBuilder visitLiteral(Literal<?> literal, StringBuilder sb) {
-    String literalString = literal.getValueString();
-    return sb.append(literalString);
-  }
-
-  private void indent(StringBuilder sb, int indentation) {
-    sb.append("  ".repeat(indentation));
+    sb.append(literal.getValueString());
+    return sb;
   }
 }

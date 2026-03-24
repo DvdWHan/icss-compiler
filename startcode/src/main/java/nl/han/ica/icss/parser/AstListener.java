@@ -4,14 +4,14 @@ package nl.han.ica.icss.parser;
 import lombok.NoArgsConstructor;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
 import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 import nl.han.ica.icss.ast.expression.unary.UnaryMinus;
 import nl.han.ica.icss.ast.expression.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
@@ -36,12 +36,10 @@ public class AstListener extends IcssBaseListener implements AstParser {
   public void exitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
-      VariableAssignment variableAssignment = (VariableAssignment)nodes.get(variableAssignmentContext);
-      stylesheet.addVariableAssignment(variableAssignment);
+      stylesheet.addChild(nodes.get(variableAssignmentContext));
     }
     for (var rulesetContext : context.ruleset()) {
-      Ruleset ruleset = (Ruleset)nodes.get(rulesetContext);
-      stylesheet.addRuleset(ruleset);
+      stylesheet.addChild(nodes.get(rulesetContext));
     }
     nodes.put(context, stylesheet);
   }
@@ -169,15 +167,8 @@ public class AstListener extends IcssBaseListener implements AstParser {
   @Override
   public void exitRuleset(IcssParser.RulesetContext context) {
     var selector = (Selector)nodes.get(context.selector());
-    var ruleset = new Ruleset(selector);
-    for (var variableAssignmentContext : context.variableAssignment()) {
-      var variableAssignment = (VariableAssignment)nodes.get(variableAssignmentContext);
-      ruleset.addVariableAssignment(variableAssignment);
-    }
-    for (var declarationContext : context.declaration()) {
-      var declaration = (Declaration)nodes.get(declarationContext);
-      ruleset.addDeclaration(declaration);
-    }
+    var body = (Body)nodes.get(context.body());
+    var ruleset = new Ruleset(selector, body);
     nodes.put(context, ruleset);
   }
 
@@ -210,6 +201,21 @@ public class AstListener extends IcssBaseListener implements AstParser {
     String identifier = context.getText();
     var classSelector = new ClassSelector(identifier);
     nodes.put(context, classSelector);
+  }
+
+  @Override
+  public void exitBody(IcssParser.BodyContext context) {
+    var body = new Body();
+    for (var variableAssignmentContext : context.variableAssignment()) {
+      body.addChild(nodes.get(variableAssignmentContext));
+    }
+    for (var declarationContext : context.declaration()) {
+      body.addChild(nodes.get(declarationContext));
+    }
+    for (var conditionalStatementContext : context.conditionalStatement()) {
+      body.addChild(nodes.get(conditionalStatementContext));
+    }
+    nodes.put(context, body);
   }
 
   @Override

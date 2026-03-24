@@ -15,9 +15,4 @@ public class Declaration extends AstNode {
     addChild(property);
     addChild(expression);
   }
-
-  @Override
-  public String getNodeLabel() {
-    return "%s(%s:%s)".formatted(getClass().getSimpleName(), property.getNodeLabel(), expression.getNodeLabel());
-  }
 }

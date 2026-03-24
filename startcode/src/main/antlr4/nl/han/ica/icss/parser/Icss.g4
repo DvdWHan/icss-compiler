@@ -54,12 +54,18 @@ scalarLiteral: SCALAR;
 pixelLiteral: PIXEL_SIZE;
 percentageLiteral: PERCENTAGE;
 
-ruleset: selector OPENING_BRACE variableAssignment* declaration* CLOSING_BRACE;
+ruleset: selector OPENING_BRACE body CLOSING_BRACE;
 
 selector: elementSelector | idSelector | classSelector;
 elementSelector: SNAKE_CASE_IDENTIFIER;
 idSelector: HASHTAG SNAKE_CASE_IDENTIFIER;
 classSelector: PERIOD SNAKE_CASE_IDENTIFIER;
 
+body: (variableAssignment | declaration | conditionalStatement)*;
+
 declaration: property COLON expression SEMICOLON;
 property: 'color' | 'background-color' | 'width' | 'height'; // only these properties are allowed
+
+conditionalStatement: IF OPENING_BRACKET expression CLOSING_BRACKET
+    OPENING_BRACE body CLOSING_BRACE
+    (ELSE OPENING_BRACE body CLOSING_BRACE)?;

@@ -2,14 +2,14 @@ package nl.han.ica.icss.parser;
 
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.expression.VariableIdentifier;
+import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
+import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
+import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 import nl.han.ica.icss.ast.expression.literal.BooleanLiteral;
 import nl.han.ica.icss.ast.expression.literal.ColorLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PercentageLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.PixelLiteral;
 import nl.han.ica.icss.ast.expression.literal.numeric.ScalarLiteral;
-import nl.han.ica.icss.ast.expression.binary.BinaryAddition;
-import nl.han.ica.icss.ast.expression.binary.BinaryMultiplication;
-import nl.han.ica.icss.ast.expression.binary.BinarySubtraction;
 import nl.han.ica.icss.ast.expression.unary.UnaryMinus;
 import nl.han.ica.icss.ast.expression.unary.UnaryPlus;
 import nl.han.ica.icss.ast.selector.ClassSelector;
@@ -27,12 +27,10 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitStylesheet(IcssParser.StylesheetContext context) {
     var stylesheet = new Stylesheet();
     for (var variableAssignmentContext : context.variableAssignment()) {
-      var variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
-      stylesheet.addVariableAssignment(variableAssignment);
+      stylesheet.addChild(visit(variableAssignmentContext));
     }
     for (var rulesetContext : context.ruleset()) {
-      var ruleset = (Ruleset)visit(rulesetContext);
-      stylesheet.addRuleset(ruleset);
+      stylesheet.addChild(visit(rulesetContext));
     }
     return stylesheet;
   }
@@ -155,16 +153,8 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   @Override
   public AstNode visitRuleset(IcssParser.RulesetContext context) {
     var selector = (Selector)visit(context.selector());
-    var ruleset = new Ruleset(selector);
-    for (var variableAssignmentContext : context.variableAssignment()) {
-      var variableAssignment = (VariableAssignment)visit(variableAssignmentContext);
-      ruleset.addVariableAssignment(variableAssignment);
-    }
-    for (var declarationContext : context.declaration()) {
-      var declaration = (Declaration)visit(declarationContext);
-      ruleset.addDeclaration(declaration);
-    }
-    return ruleset;
+    var body = (Body)visit(context.body());
+    return new Ruleset(selector, body);
   }
 
   @Override
@@ -198,6 +188,21 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   }
 
   @Override
+  public AstNode visitBody(IcssParser.BodyContext context) {
+    var body = new Body();
+    for (var variableAssignmentContext : context.variableAssignment()) {
+      body.addChild(visit(variableAssignmentContext));
+    }
+    for (var declarationContext : context.declaration()) {
+      body.addChild(visit(declarationContext));
+    }
+    for (var conditionalStatementContext : context.conditionalStatement()) {
+      body.addChild(visit(conditionalStatementContext));
+    }
+    return body;
+  }
+
+  @Override
   public AstNode visitDeclaration(IcssParser.DeclarationContext context) {
     var property = (Property)visit(context.property());
     var expression = (Expression)visit(context.expression());
@@ -208,5 +213,13 @@ public class AstVisitor extends IcssBaseVisitor<AstNode> implements AstParser {
   public AstNode visitProperty(IcssParser.PropertyContext context) {
     String identifier = context.getText();
     return new Property(identifier);
+  }
+
+  @Override
+  public AstNode visitConditionalStatement(IcssParser.ConditionalStatementContext context) {
+    var condition = (Expression)visit(context.expression());
+    var ifBody = (Body)visit(context.body(0));
+    var elseBody = context.body().size() > 1 ? (Body)visit(context.body(1)) : null;
+    return new ConditionalStatement(condition, ifBody, elseBody);
   }
 }

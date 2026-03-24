@@ -7,12 +7,16 @@ import java.util.List;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Stylesheet extends AstNode {
+public class Body extends AstNode {
   public List<VariableAssignment> getVariableAssignments() {
     return getChildrenOfType(VariableAssignment.class);
   }
 
-  public List<Ruleset> getRulesets() {
-    return getChildrenOfType(Ruleset.class);
+  public List<Declaration> getDeclarations() {
+    return getChildrenOfType(Declaration.class);
+  }
+
+  public List<ConditionalStatement> getConditionalStatements() {
+    return getChildrenOfType(ConditionalStatement.class);
   }
 }

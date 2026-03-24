@@ -8,14 +8,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AstNode {
   @Getter private AstNode parent;
-  private final List<AstNode> children = new ArrayList<>();
+  @EqualsAndHashCode.Include private final List<AstNode> children = new ArrayList<>();
   @Getter private SemanticError error;
 
   public final List<AstNode> getChildren() {
     return Collections.unmodifiableList(children);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected <T extends AstNode> List<T> getChildrenOfType(Class<?> clazz) {
+    return (List<T>)children.stream().filter(clazz::isInstance).map(clazz::cast).toList();
   }
 
   public final AstNode addChild(AstNode child) {
@@ -40,7 +45,7 @@ public abstract class AstNode {
     parent.removeChild(this);
   }
 
-  public final void removeChild(AstNode child) {
+  private void removeChild(AstNode child) {
     children.remove(child);
   }
 
@@ -51,7 +56,7 @@ public abstract class AstNode {
     parent.replaceChild(this, node);
   }
 
-  public final void replaceChild(AstNode oldChild, AstNode newChild) {
+  private void replaceChild(AstNode oldChild, AstNode newChild) {
     if (newChild == null) {
       throw new IllegalStateException("Cannot replace %s with null".formatted(oldChild));
     }
