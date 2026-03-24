@@ -1,4 +1,0 @@
-p {
-  ParagraphWidth := 500px;
-	width: ParagraphWidth + 2 * 10px;
-}

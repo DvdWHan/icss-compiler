@@ -1,10 +1,14 @@
+UseColor := TRUE;
+
 p {
-	if[TRUE] {
-		background-color: #111111;
-		color: #222222;
-	}
-	color: #333333;
-	if[FALSE] {
-		background-color: #444444;
-	}
+  if [UseColor] {
+    UseLightMode := FALSE;
+    if [UseLightMode] {
+      background-color: #ffffff;
+      color: #000000;
+    } else {
+      background-color: #000000;
+      color: #ffffff;
+    }
+  }
 }

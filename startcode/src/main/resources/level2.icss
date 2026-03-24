@@ -1,4 +1,5 @@
+ParagraphHeight := 500px;
+
 p {
-  ParagraphWidth := 500px;
-	width: ParagraphWidth + 2 * 10px;
+	height: 2 * ParagraphHeight + 50px;
 }

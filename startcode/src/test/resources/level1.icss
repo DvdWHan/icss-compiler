@@ -1,7 +1,0 @@
-BackgroundColor := #ffffff;
-
-p {
-  ParagraphWidth := 500px;
-	background-color: BackgroundColor;
-	width: ParagraphWidth;
-}

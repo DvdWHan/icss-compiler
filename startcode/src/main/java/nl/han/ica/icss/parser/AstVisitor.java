@@ -219,7 +219,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode<?>> implements AstParser
   public AstNode<?> visitConditionalStatement(IcssParser.ConditionalStatementContext context) {
     var condition = (Expression)visit(context.expression());
     var ifBody = (Body)visit(context.body(0));
-    var elseBody = context.body().size() > 1 ? (Body)visit(context.body(1)) : null;
+    var elseBody = context.body().size() > 1 ? (Body)visit(context.body(1)) : new Body();
     return new ConditionalStatement(condition, ifBody, elseBody);
   }
 }

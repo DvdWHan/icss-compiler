@@ -23,6 +23,6 @@ public class VariableAssignment extends AstNode<VariableAssignment> {
 
   @Override
   public String getNodeLabel() {
-    return "%s(%s=%s)".formatted(getClass().getSimpleName(), identifier.getNodeLabel(), expression.getNodeLabel());
+    return "%s".formatted(getClass().getSimpleName());
   }
 }

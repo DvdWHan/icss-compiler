@@ -1,0 +1,28 @@
+ParagraphWidth := 100%;
+ParagraphHeight := 200px;
+
+p {
+  width: ParagraphWidth;
+  UseColor := TRUE;
+  if [UseColor] {
+    UseLightMode := FALSE;
+    if [UseLightMode] {
+      background-color: #ffffff;
+      color: #000000;
+    } else {
+      background-color: #000000;
+      color: #ffffff;
+    }
+  }
+  height: 2 * ParagraphHeight + 50px;
+}
+
+#menu {
+  width: 75%;
+  height: 200px;
+}
+
+.menu {
+  background-color: #555555;
+  color: #aaaaaa;
+}
