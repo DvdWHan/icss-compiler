@@ -40,7 +40,7 @@ public abstract class AstNode<Self extends AstNode<Self>> {
     }
   }
 
-  public final void remove() {
+  public final void removeSelf() {
     if (parent == null) {
       throw new IllegalStateException("Cannot remove %s without a parent".formatted(this));
     }
