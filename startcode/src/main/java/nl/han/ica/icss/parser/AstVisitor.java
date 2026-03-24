@@ -17,6 +17,8 @@ import nl.han.ica.icss.ast.selector.ElementSelector;
 import nl.han.ica.icss.ast.selector.IdSelector;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.Optional;
+
 public class AstVisitor extends IcssBaseVisitor<AstNode<?>> implements AstParser {
   public Ast buildAst(ParseTree parseTree) {
     var stylesheet = (Stylesheet)visit(parseTree);
@@ -190,14 +192,14 @@ public class AstVisitor extends IcssBaseVisitor<AstNode<?>> implements AstParser
   @Override
   public AstNode<?> visitBody(IcssParser.BodyContext context) {
     var body = new Body();
-    for (var variableAssignmentContext : context.variableAssignment()) {
-      body.addChild(visit(variableAssignmentContext));
-    }
-    for (var declarationContext : context.declaration()) {
-      body.addChild(visit(declarationContext));
-    }
-    for (var conditionalStatementContext : context.conditionalStatement()) {
-      body.addChild(visit(conditionalStatementContext));
+    for (ParseTree child : context.children) {
+      if (child instanceof IcssParser.VariableAssignmentContext variableAssignmentContext) {
+        body.addChild(visit(variableAssignmentContext));
+      } else if (child instanceof IcssParser.DeclarationContext declarationContext) {
+        body.addChild(visit(declarationContext));
+      } else if (child instanceof IcssParser.ConditionalStatementContext conditionalStatementContext) {
+        body.addChild(visit(conditionalStatementContext));
+      }
     }
     return body;
   }
@@ -219,7 +221,7 @@ public class AstVisitor extends IcssBaseVisitor<AstNode<?>> implements AstParser
   public AstNode<?> visitConditionalStatement(IcssParser.ConditionalStatementContext context) {
     var condition = (Expression)visit(context.expression());
     var ifBody = (Body)visit(context.body(0));
-    var elseBody = context.body().size() > 1 ? (Body)visit(context.body(1)) : new Body();
-    return new ConditionalStatement(condition, ifBody, elseBody);
+    Optional<Body> elseBody = Optional.ofNullable(context.body().size() > 1 ? (Body)visit(context.body(1)) : null);
+    return new ConditionalStatement(condition, ifBody, elseBody.orElseGet(Body::new));
   }
 }

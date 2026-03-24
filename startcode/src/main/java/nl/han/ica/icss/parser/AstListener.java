@@ -206,14 +206,14 @@ public class AstListener extends IcssBaseListener implements AstParser {
   @Override
   public void exitBody(IcssParser.BodyContext context) {
     var body = new Body();
-    for (var variableAssignmentContext : context.variableAssignment()) {
-      body.addChild(nodes.get(variableAssignmentContext));
-    }
-    for (var declarationContext : context.declaration()) {
-      body.addChild(nodes.get(declarationContext));
-    }
-    for (var conditionalStatementContext : context.conditionalStatement()) {
-      body.addChild(nodes.get(conditionalStatementContext));
+    for (ParseTree child : context.children) {
+      if (child instanceof IcssParser.VariableAssignmentContext variableAssignmentContext) {
+        body.addChild(nodes.get(variableAssignmentContext));
+      } else if (child instanceof IcssParser.DeclarationContext declarationContext) {
+        body.addChild(nodes.get(declarationContext));
+      } else if (child instanceof IcssParser.ConditionalStatementContext conditionalStatementContext) {
+        body.addChild(nodes.get(conditionalStatementContext));
+      }
     }
     nodes.put(context, body);
   }

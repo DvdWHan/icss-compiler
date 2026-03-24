@@ -48,7 +48,7 @@ public class Evaluator implements Transformer {
   private Optional<Value<?>> visitVariableAssignment(VariableAssignment variableAssignment) {
     Value<?> value = visit(variableAssignment.getExpression()).orElseThrow();
     declare(variableAssignment.getIdentifier(), value);
-    variableAssignment.remove();
+    variableAssignment.removeSelf();
     return Optional.empty();
   }
 
@@ -104,12 +104,13 @@ public class Evaluator implements Transformer {
 
   private Optional<Value<?>> visitConditionalStatement(ConditionalStatement conditionalStatement) {
     boolean result = evaluateCondition(conditionalStatement);
-    Body parent = (Body)conditionalStatement.getParent();
     Body chosen = result ? conditionalStatement.getIfBody() : conditionalStatement.getElseBody();
+    Body parent = (Body)conditionalStatement.getParent();
+    int insertionIndex = parent.getChildren().indexOf(conditionalStatement);
+    hoistBodyIntoParent(chosen, parent, insertionIndex);
     Body unchosen = result ? conditionalStatement.getElseBody() : conditionalStatement.getIfBody();
-    hoistBodyIntoParent(chosen, parent);
     removeBody(unchosen);
-    conditionalStatement.remove();
+    conditionalStatement.removeSelf();
     return Optional.empty();
   }
 
@@ -117,29 +118,29 @@ public class Evaluator implements Transformer {
     return (boolean)visit(conditionalStatement.getCondition()).orElseThrow().value();
   }
 
-  private void hoistBodyIntoParent(Body source, Body target) {
+  private void hoistBodyIntoParent(Body source, Body target, int insertionIndex) {
     if (source == null) {
       return;
     }
     scoped(() -> {
-      int index = target.getChildren().size();
-      for (AstNode<?> child : new ArrayList<>(source.getChildren())) {
-        child.remove();
-        target.addChild(index++, child);
-        visit(child);
+      int index = insertionIndex;
+      for (AstNode<?> sourceChild : new ArrayList<>(source.getChildren())) {
+        sourceChild.removeSelf();
+        target.addChild(index++, sourceChild);
+        visit(sourceChild);
       }
     });
+  }
+
+  private void removeBody(Body body) {
+    if (body != null) {
+      body.removeSelf();
+    }
   }
 
   private void visitChildren(AstNode<?> node) {
     for (AstNode<?> child : new ArrayList<>(node.getChildren())) {
       visit(child);
-    }
-  }
-
-  private void removeBody(Body body) {
-    if (body != null) {
-      body.remove();
     }
   }
 
