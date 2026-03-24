@@ -186,9 +186,8 @@ public class Fixtures {
                     new Property("width"),
                     new VariableIdentifier("ParagraphWidth")
                 ))
-            ))
-            .addChild(new Declaration(
-                new Property("UseColor"),
+            .addChild(new VariableAssignment(
+                new VariableIdentifier("UseColor"),
                 new BooleanLiteral(true))
             ).addChild(new ConditionalStatement(
                 new VariableIdentifier("UseColor"),
@@ -227,7 +226,7 @@ public class Fixtures {
                 ),
                 new PixelLiteral(50)
             )
-        )
+        )))
     );
     stylesheet.addChild(new Ruleset(
         new IdSelector("menu"),
