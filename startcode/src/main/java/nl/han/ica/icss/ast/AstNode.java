@@ -42,7 +42,7 @@ public abstract class AstNode<Self extends AstNode<Self>> {
 
   public final void removeSelf() {
     if (parent == null) {
-      throw new IllegalStateException("Cannot remove %s without a parent".formatted(this));
+      throw new IllegalStateException(error("remove", this, "node has no parent"));
     }
     parent.removeChild(this);
   }
@@ -53,20 +53,36 @@ public abstract class AstNode<Self extends AstNode<Self>> {
 
   public final void replaceWith(AstNode<?> node) {
     if (parent == null) {
-      throw new IllegalStateException("Cannot replace %s with %s without a parent".formatted(this, node));
+      throw new IllegalStateException(error("replace", this, "node has no parent"));
+    }
+    if (node == null) {
+      throw new IllegalArgumentException(error("replace", this, "replacement node is null"));
     }
     parent.replaceChild(this, node);
   }
 
   private void replaceChild(AstNode<?> oldChild, AstNode<?> newChild) {
     if (newChild == null) {
-      throw new IllegalStateException("Cannot replace %s with null".formatted(oldChild));
+      throw new IllegalArgumentException(error("replaceChild", oldChild, "replacement node is null"));
     }
     if (!children.contains(oldChild)) {
-      throw new IllegalArgumentException("%s is not a child of %s".formatted(oldChild, newChild));
+      throw new IllegalArgumentException(error(
+          "replaceChild",
+          oldChild,
+          "node is not a child of parent",
+          "parent=%s".formatted(parent)
+      ));
     }
     newChild.parent = this;
     children.set(children.indexOf(oldChild), newChild);
+  }
+
+  private static String error(String action, AstNode<?> failedFor, String because) {
+    return "%s failed for %s: %s".formatted(action, failedFor.getNodeLabel(), because);
+  }
+
+  private static String error(String action, AstNode<?> failedFor, String because, String context) {
+    return "%s failed for %s: %s{%s}".formatted(action, failedFor.getNodeLabel(), because, context);
   }
 
   public final boolean hasError() {
