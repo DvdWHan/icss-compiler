@@ -139,6 +139,7 @@ public abstract class AstNode<Self extends AstNode<Self>> {
     return "%s failed for %s: %s".formatted(action, failedFor.getNodeLabel(), because);
   }
 
+  @SuppressWarnings("SameParameterValue")
   private static String error(String action, AstNode<?> failedFor, String because, String context) {
     return "%s failed for %s: %s{%s}".formatted(action, failedFor.getNodeLabel(), because, context);
   }
